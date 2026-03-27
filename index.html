@@ -9,90 +9,89 @@
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .app-container { background: #fff; width: 100%; max-width: 1400px; height: 88vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; flex-direction: row; overflow: hidden; }
         
-        /* [2] 좌측 LNB (히스토리 영역) 디자인 */
-        .lnb { width: 280px; background: #F8F9FA; border-right: 2px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
-        .lnb-header { padding: 20px 15px; font-size: 16px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; display: flex; align-items: center; gap: 8px; }
-        .lnb-list { flex: 1; overflow-y: auto; padding: 15px 10px; display: flex; flex-direction: column; gap: 10px; }
+        /* [2] 좌측 LNB (히스토리 영역) - 사이즈 살짝 축소 */
+        .lnb { width: 260px; background: #F8F9FA; border-right: 2px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
+        .lnb-header { padding: 15px; font-size: 15px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; display: flex; align-items: center; gap: 8px; }
+        .lnb-list { flex: 1; overflow-y: auto; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; }
         
-        .history-item { padding: 12px; background: #fff; border: 2px solid #E0E0E0; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: flex-start; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .history-item { padding: 10px; background: #fff; border: 2px solid #E0E0E0; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: flex-start; gap: 8px; }
         .history-item:hover { border-color: #B3E5FC; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .history-checkbox { transform: scale(1.3); cursor: pointer; accent-color: #03A9F4; margin-top: 2px; }
+        .history-checkbox { transform: scale(1.2); cursor: pointer; accent-color: #03A9F4; margin-top: 2px; }
         .history-time { font-size: 11px; color: #888; margin-bottom: 4px; font-weight: bold; }
-        .history-preview { font-size: 12px; color: #555; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
-        .history-empty { text-align: center; color: #888; font-size: 13px; padding: 30px 10px; }
+        .history-preview { font-size: 11px; color: #555; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+        .history-empty { text-align: center; color: #888; font-size: 12px; padding: 30px 10px; }
         
-        .lnb-actions { padding: 15px; border-top: 1px solid #E0E0E0; background: #fff; display: flex; gap: 8px; }
+        .lnb-actions { padding: 12px; border-top: 1px solid #E0E0E0; background: #fff; display: flex; gap: 6px; }
         
         /* [3] 우측 메인 컨텐츠 영역 */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
 
         .top-nav { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #E0E0E0; }
         .tab-header { display: flex; flex: 1; }
-        .tab-btn { flex: 1; max-width: 200px; padding: 15px 0; border: none; background: transparent; font-size: 15px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; }
+        /* 탭 높이와 폰트 조정 */
+        .tab-btn { flex: 1; max-width: 180px; padding: 12px 0; border: none; background: transparent; font-size: 14px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; }
         .tab-btn:hover { background: #F0F0F0; }
         .tab-btn.active { background: #757575; color: #FFFFFF; border-radius: 8px 8px 0 0; }
         
-        /* ✨ 네비게이션 우측 액션(도움말 + 위키) 정렬 ✨ */
-        .nav-actions { padding: 0 20px 10px 0; display: flex; align-items: center; gap: 10px; }
+        .nav-actions { padding: 0 15px 8px 0; display: flex; align-items: center; gap: 8px; }
         
-        .tab-content { flex: 1; padding: 25px; display: none; flex-direction: column; overflow: hidden; }
+        .tab-content { flex: 1; padding: 20px; display: none; flex-direction: column; overflow: hidden; }
         .tab-content.active { display: flex; }
 
-        /* 공통 버튼 디자인 */
-        .btn { border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; color: #333; outline: none; padding: 8px 0; display: flex; justify-content: center; align-items: center; }
+        /* ✨ 공통 버튼 디자인 다이어트 ✨ */
+        .btn { border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; color: #333; outline: none; padding: 6px 12px; display: flex; justify-content: center; align-items: center; }
         .btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
         .btn:active { transform: translateY(1px); }
-        .btn-action { width: 90px; text-align: center; } 
+        
+        /* Clear, 복사 버튼 크기를 조금 더 줄임 */
+        .btn-action { width: 75px; text-align: center; padding: 6px 0; } 
         .btn-clear { background: #FFEBEE; color: #E57373; }
         .btn-copy { background: #E0E0E0; }
-        .btn-primary { background: #D4EFFF; padding: 8px 16px; } 
-        .btn-chunk { background: #FFF59D; margin-right: 8px; padding: 8px 16px; font-size: 12px; }
+        .btn-primary { background: #D4EFFF; } 
+        .btn-chunk { background: #FFF59D; margin-right: 6px; padding: 6px 12px; font-size: 11px; }
         
-        /* ✨ 도움말(?) 전용 동그란 버튼 디자인 ✨ */
-        .btn-help { width: 28px; height: 28px; border-radius: 50%; background: #E0E0E0; color: #666; font-weight: bold; font-size: 14px; border: none; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
-        .btn-help:hover { background: #D0D0D0; transform: translateY(-1px); }
-        .btn-help:active { transform: translateY(1px); }
+        .btn-help { width: 24px; height: 24px; border-radius: 50%; background: #E0E0E0; color: #666; font-weight: bold; font-size: 13px; border: none; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; }
+        .btn-help:hover { background: #D0D0D0; }
 
         /* 텍스트 박스 */
-        textarea { width: 100%; flex: 1; border: 1px solid #E0E0E0; border-radius: 8px; padding: 15px; font-family: 'Malgun Gothic', sans-serif; font-size: 14px; resize: none; outline: none; transition: 0.2s; line-height: 1.6; }
+        textarea { width: 100%; flex: 1; border: 1px solid #E0E0E0; border-radius: 8px; padding: 12px; font-family: 'Malgun Gothic', sans-serif; font-size: 13px; resize: none; outline: none; transition: 0.2s; line-height: 1.6; }
         textarea:focus { border-color: #757575; box-shadow: 0 0 0 3px rgba(117,117,117,0.1); }
-        
-        /* ✨ 글자 수 카운터 (텍스트박스 바로 아래 찰싹 붙이기) ✨ */
-        .char-count { text-align: right; font-size: 12px; color: #888; margin-top: 4px; margin-bottom: 8px; font-weight: bold; }
+        .char-count { text-align: right; font-size: 11px; color: #888; margin-top: 4px; margin-bottom: 6px; font-weight: bold; }
 
         /* 탭 1 레이아웃 */
-        .converter-layout { display: flex; gap: 20px; height: 100%; }
+        .converter-layout { display: flex; gap: 15px; height: 100%; }
         .pane { flex: 1; display: flex; flex-direction: column; }
-        .pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .pane-title { font-size: 15px; font-weight: bold; }
-        .mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; }
-        /* 묶음 버튼 컨테이너 마진 조정 */
-        .chunk-container { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; min-height: 35px; }
-        .chunk-label { font-size: 13px; font-weight: bold; color: #FF5722; margin-right: 10px; display: none; }
+        .pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .pane-title { font-size: 14px; font-weight: bold; }
+        
+        /* 버튼 나란히 정렬 고정 */
+        .header-buttons { display: flex; gap: 5px; }
+
+        .mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; gap: 8px; }
+        .chunk-container { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; min-height: 30px; }
+        .chunk-label { font-size: 12px; font-weight: bold; color: #FF5722; margin-right: 8px; display: none; }
 
         /* 탭 2 레이아웃 */
-        .config-bar { display: flex; align-items: center; gap: 15px; background: #FCFCFC; border: 1px solid #E0E0E0; padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; }
-        .config-bar input { padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 6px; outline: none; font-family: inherit; font-size: 13px; }
+        .config-bar { display: flex; align-items: center; gap: 12px; background: #FCFCFC; border: 1px solid #E0E0E0; padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; }
+        .config-bar input { padding: 6px 10px; border: 1px solid #E0E0E0; border-radius: 6px; outline: none; font-family: inherit; font-size: 12px; }
         .config-bar input:focus { border-color: #757575; }
-        /* Placeholder 색상 연하게 */
         .config-bar input::placeholder { color: #BBB; }
         
-        .action-bar { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .action-left { display: flex; gap: 10px; }
+        .action-bar { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .action-left { display: flex; gap: 8px; }
 
-        /* 토스트 팝업 */
-        #toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; z-index: 1000; }
+        /* 토스트 및 모달 */
+        #toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; z-index: 1000; }
         #toast.show { opacity: 1; transform: translateY(0); }
         #toast.error { background: #F44336; }
 
-        /* 모달 공통 (히스토리 & 도움말) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.2s; }
         .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content { background: #fff; width: 90%; max-width: 550px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
+        .modal-content { background: #fff; width: 90%; max-width: 550px; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
         .modal-overlay.show .modal-content { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 15px; margin-bottom: 15px; }
-        .modal-title { font-size: 18px; font-weight: bold; color: #333; }
-        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; transition: 0.2s; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 12px; margin-bottom: 12px; }
+        .modal-title { font-size: 16px; font-weight: bold; color: #333; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; transition: 0.2s; }
         .modal-close:hover { color: #F44336; }
     </style>
 </head>
@@ -106,7 +105,7 @@
             </div>
         <div class="lnb-actions">
             <button class="btn btn-primary" style="flex: 1;" onclick="mergeHistory()">선택 취합하기</button>
-            <button class="btn btn-clear" style="width: 45px; font-size: 16px;" onclick="deleteHistory()" title="삭제">🗑️</button>
+            <button class="btn btn-clear" style="width: 40px; font-size: 14px;" onclick="deleteHistory()" title="삭제">🗑️</button>
         </div>
     </div>
 
@@ -127,7 +126,7 @@
                 <div class="pane">
                     <div class="pane-header">
                         <span class="pane-title">작성창</span>
-                        <div>
+                        <div class="header-buttons">
                             <button class="btn btn-action btn-clear" onclick="clearText('input_box')">Clear</button>
                             <button class="btn btn-action btn-copy" onclick="copyText('input_box')">전체 복사</button>
                         </div>
@@ -139,13 +138,13 @@
                 </div>
 
                 <div class="mid-buttons">
-                    <button class="btn btn-primary" style="width: 100px; height: 50px; font-size: 15px;" onclick="processText()">▶ 변환하기</button>
+                    <button class="btn btn-primary" style="width: 85px; height: 40px; font-size: 13px;" onclick="processText()">변환하기</button>
                 </div>
 
                 <div class="pane">
                     <div class="pane-header">
                         <span class="pane-title">변환 결과</span>
-                        <div>
+                        <div class="header-buttons">
                             <button class="btn btn-action btn-clear" onclick="clearText('output_box')">Clear</button>
                             <button class="btn btn-action btn-copy" onclick="copyText('output_box')">전체 복사</button>
                         </div>
@@ -172,7 +171,7 @@
             
             <div class="action-bar">
                 <div class="action-left">
-                    <button class="btn btn-action btn-copy" style="width: 100px;" onclick="copyProgress()">진행률 복사</button>
+                    <button class="btn btn-action btn-copy" style="width: 85px;" onclick="copyProgress()">진행률 복사</button>
                     <button class="btn btn-action btn-copy" onclick="copyText('smart_input')">내용 복사</button>
                 </div>
                 <button class="btn btn-action btn-clear" onclick="clearText('smart_input')">Clear</button>
@@ -188,20 +187,20 @@
             <div class="modal-title">❓ 일보고 작성기 100% 활용 비법</div>
             <button class="modal-close" onclick="closeHelp()">×</button>
         </div>
-        <div style="font-size: 14px; line-height: 1.7; color: #444; overflow-y: auto; padding-right: 10px;">
-            <h3 style="color: #03A9F4; margin-bottom: 8px; font-size: 15px;">💡 스마트 에디터 (일보고 작성 탭)</h3>
+        <div style="font-size: 13px; line-height: 1.7; color: #444; overflow-y: auto; padding-right: 10px;">
+            <h3 style="color: #03A9F4; margin-bottom: 8px; font-size: 14px;">💡 스마트 에디터 (일보고 작성 탭)</h3>
             <ul style="margin-left: 25px; margin-bottom: 20px;">
-                <li><b>자동 순번:</b> 기호를 적고 <code>Enter</code>를 치면 이전 기호에 맞춰 다음 번호가 자동 생성됩니다. (1. -> 2. / a. -> b.)</li>
+                <li><b>자동 순번:</b> 기호를 적고 <code>Enter</code>를 치면 이전 기호에 맞춰 다음 번호가 자동 생성됩니다.</li>
                 <li><b>들여쓰기:</b> 기호가 생성된 상태에서 <code>Tab</code>을 누르면 하위 번호로 내려갑니다. (1. -> a.)</li>
-                <li><b>내어쓰기/탈출:</b> 내용 없이 <code>Enter</code>나 <code>Backspace</code>를 누르면 상위 번호로 돌아가거나 양식을 탈출합니다.</li>
-                <li><b>자동 저장:</b> 타자를 치는 즉시 브라우저에 저장되어, 실수로 새로고침을 해도 내용이 날아가지 않습니다.</li>
+                <li><b>내어쓰기/탈출:</b> 내용 없이 <code>Enter</code>나 <code>Backspace</code>를 누르면 상위 번호로 돌아갑니다.</li>
+                <li><b>자동 저장:</b> 타자를 치는 즉시 브라우저에 임시 저장됩니다.</li>
             </ul>
             
-            <h3 style="color: #03A9F4; margin-bottom: 8px; font-size: 15px;">💡 다중 선택 취합 & 분할 전송</h3>
+            <h3 style="color: #03A9F4; margin-bottom: 8px; font-size: 14px;">💡 다중 선택 취합 & 분할 전송</h3>
             <ul style="margin-left: 25px;">
-                <li><b>타임머신 히스토리:</b> [변환하기]를 누를 때마다 좌측에 기록이 쌓입니다.</li>
+                <li><b>히스토리:</b> [변환하기]를 누를 때마다 좌측 LNB에 기록이 쌓입니다.</li>
                 <li><b>선택 취합하기:</b> 취합할 팀원들의 기록을 모두 체크하고 [선택 취합하기]를 누르면 한 방에 합쳐줍니다.</li>
-                <li><b>4500자 분할:</b> 글자 수가 메신저 제한(5000자)을 넘으면, 안전하게 4500자 단위로 잘라 하단에 노란색 <b>[N번 묶음]</b> 복사 버튼을 생성해 줍니다.</li>
+                <li><b>4500자 분할:</b> 글자 수가 메신저 제한을 넘으면 안전하게 4500자 단위로 잘라 분할 복사 버튼을 만들어 줍니다.</li>
             </ul>
         </div>
     </div>
@@ -211,7 +210,7 @@
 
 <script>
     /* =========================================
-       [1] 공통 유틸리티 & 모달(도움말) 제어
+       [1] 공통 유틸리티 & 모달
     ========================================= */
     function showToast(msg, isError=false) {
         const toast = document.getElementById('toast');
@@ -225,11 +224,14 @@
         document.querySelectorAll('.tab-content').forEach((content, idx) => { content.classList.toggle('active', idx + 1 === tabNum); });
     }
 
+    // ✨ 특수 기호 깨짐 방지를 위한 URL 인코딩 완벽 적용 ✨
     function openWiki() {
         const today = new Date();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
-        window.open(`http://wiki.duzon.com:8080/display/DW/[WE1U-QA-Cell]+${mm}.${dd}+::+2026`, '_blank');
+        
+        const url = `http://wiki.duzon.com:8080/display/DW/%5BWE1U-QA-Cell%5D+${mm}.${dd}+%3A%3A+2026`;
+        window.open(url, '_blank');
     }
 
     function openHelp() { document.getElementById('help_modal').classList.add('show'); }
