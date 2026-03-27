@@ -15,7 +15,7 @@
         .lnb-header { height: 43px; padding: 0 15px; font-size: 14px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; display: flex; align-items: center; justify-content: space-between; }
         .select-all-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 10px; font-size: 11px; color: #666; font-weight: bold; }
         
-        /* ✨ 1. 화이트 체크 아이콘을 위한 커스텀 체크박스 스타일 ✨ */
+        /* 화이트 체크 아이콘 커스텀 체크박스 */
         input[type="checkbox"] { 
             appearance: none; -webkit-appearance: none; 
             width: 16px; height: 16px; border: 1px solid #ccc; border-radius: 3px; background: #fff; 
@@ -40,11 +40,8 @@
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
         .top-nav { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #E0E0E0; height: 43px; }
         .tab-header { display: flex; flex: 1; height: 100%; }
-        
-        /* ✨ 3. 탭 버튼 너비 축소 ✨ */
         .tab-btn { width: 120px; height: 100%; border: none; background: transparent; font-size: 13px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; border-right: 1px solid #EEE; }
         .tab-btn.active { background: #757575; color: #FFFFFF; border-right: none; }
-        
         .nav-actions { padding-right: 15px; display: flex; align-items: center; gap: 8px; height: 100%; }
         
         .tab-content { flex: 1; padding: 20px; display: none; flex-direction: column; overflow: hidden; }
@@ -63,10 +60,7 @@
         .chunk-header { display: flex; justify-content: space-between; align-items: center; background: #FFFDE7; padding: 8px 12px; cursor: pointer; }
         .chunk-header:hover { background: #FFF9C4; }
         .chunk-title { font-size: 11px; font-weight: bold; color: #F57F17; }
-        
-        /* ✨ 4. 분할 글자수 표시를 위한 정보 텍스트 ✨ */
         .chunk-info { font-size: 10px; color: #888; margin-left: auto; margin-right: 10px; font-weight: normal; }
-        
         .chunk-body { display: none; padding: 10px; background: #FAFAFA; border-top: 1px solid #EEE; }
         .chunk-body textarea { height: 80px; font-size: 11px; background: transparent; border: none; padding: 0; width: 100%; resize: none; outline: none; line-height: 1.5; color: #666; }
         .chunk-box.open .chunk-body { display: block; }
@@ -78,13 +72,9 @@
         .converter-layout { display: flex; gap: 15px; height: 100%; }
         .pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        
-        /* ✨ 6. 이름 앞에 아이콘 추가 ✨ */
         .pane-title { font-size: 13px; font-weight: bold; color: #555; display: flex; align-items: center; gap: 4px; }
-        
         .header-buttons { display: flex; gap: 5px; }
         .mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; gap: 8px; }
-        
         .chunk-container { display: flex; flex-direction: column; overflow-y: auto; max-height: 220px; padding-top: 5px; }
         .chunk-label { font-size: 11px; font-weight: bold; color: #FF5722; margin-bottom: 8px; display: none; }
 
@@ -93,18 +83,20 @@
         .action-bar { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center; }
         .action-left { display: flex; gap: 8px; }
 
-        #toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; z-index: 1000; }
+        /* 토스트 알림 애니메이션 & 색상 */
+        #toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: 0.3s; transform: translateY(20px); pointer-events: none; z-index: 1000; }
         #toast.show { opacity: 1; transform: translateY(0); }
+        #toast.error { background: #F44336; } /* 빨간색 에러 배경 */
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.2s; }
         .modal-overlay.show { display: flex; opacity: 1; }
         .modal-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 15px; margin-bottom: 15px; }
         .modal-title { font-size: 18px; font-weight: bold; color: #333; }
-        .help-section { margin-bottom: 15px; }
-        .help-section h3 { font-size: 14px; color: #03A9F4; margin-bottom: 5px; }
-        .help-section li { font-size: 12px; color: #555; list-style: none; margin-bottom: 3px; }
-        .help-section li::before { content: "•"; color: #03A9F4; margin-right: 8px; }
+        .help-section { margin-bottom: 20px; }
+        .help-section h3 { font-size: 14px; color: #03A9F4; margin-bottom: 8px; }
+        .help-section li { font-size: 12px; color: #555; line-height: 1.8; margin-bottom: 4px; list-style: none; }
+        .help-section li::before { content: "•"; color: #03A9F4; margin-right: 10px; }
     </style>
 </head>
 <body>
@@ -200,14 +192,14 @@
         </div>
         <div style="overflow-y: auto;">
             <div class="help-section">
-                <h3>1. 변환기능</h3>
-                <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백을 추가합니다.</li></ul>
+                <h3>1. 변환기능 이용</h3>
+                <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li></ul>
             </div>
             <div class="help-section">
-                <h3>2. 취합기능</h3>
+                <h3>2. 취합기능 이용</h3>
                 <ul>
-                    <li>[변환하기] 클릭 시 좌측 히스토리에 자동 저장됩니다.</li>
-                    <li>여러 항목을 선택해 [선택 취합하기]로 합칠 수 있습니다.</li>
+                    <li>[변환하기]를 누른 내용은 좌측 히스토리에 저장됩니다.</li>
+                    <li>항목 선택 후 [선택 취합하기]로 한 번에 합칠 수 있습니다.</li>
                     <li>4500자 초과 시 자동 분할되며, 묶음을 클릭해 복사 가능합니다.</li>
                 </ul>
             </div>
@@ -218,10 +210,11 @@
 <div id="toast">알림 메시지</div>
 
 <script>
-    function showToast(msg) {
+    /* ✨ 토스트 로직 개선: 에러 시 빨간색 표시 ✨ */
+    function showToast(msg, isError = false) {
         const toast = document.getElementById('toast');
         toast.textContent = msg;
-        toast.className = 'show';
+        toast.className = isError ? 'show error' : 'show';
         setTimeout(() => toast.className = '', 1500);
     }
 
@@ -253,9 +246,12 @@
         }
     }
 
+    /* ✨ 텍스트 없을 때 빨간 창 띄우기 패치 ✨ */
     function copyToClipboard(text, successMsg) {
-        if(!text.trim()) return showToast("⚠️ 내용이 없어요!");
-        navigator.clipboard.writeText(text).then(() => showToast(successMsg));
+        if(!text || !text.trim()) {
+            return showToast("⚠️ 복사할 내용이 없습니다.", true); // 🔴 빨간색 알림
+        }
+        navigator.clipboard.writeText(text).then(() => showToast(successMsg)); // 🟢 초록색 알림
     }
 
     function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
@@ -321,7 +317,6 @@
         }
     }
 
-    /* ✨ 4. 분할 UI 생성 (글자수 표기 포함) ✨ */
     function createChunkUI(chunks) {
         const container = document.getElementById('chunk_buttons');
         container.innerHTML = '';
@@ -330,61 +325,41 @@
         label.style.display = 'inline-block';
 
         chunks.forEach((text, i) => {
-            const charCount = text.length; // 각 묶음의 글자수 계산
             const box = document.createElement('div');
             box.className = 'chunk-box';
-            
             const header = document.createElement('div');
             header.className = 'chunk-header';
             header.onclick = () => box.classList.toggle('open');
-            
             const title = document.createElement('span');
             title.className = 'chunk-title';
             title.textContent = `📦 ${i+1}번 묶음`;
-            
-            // ✨ 글자수 표시 영역 ✨
             const info = document.createElement('span');
             info.className = 'chunk-info';
-            info.textContent = `(${charCount}자)`;
-            
+            info.textContent = `(${text.length}자)`;
             const copyBtn = document.createElement('button');
             copyBtn.className = 'btn btn-primary';
             copyBtn.style.cssText = 'padding:2px 8px; font-size:10px;';
             copyBtn.textContent = '복사';
-            
             const targetText = text; 
-            copyBtn.onclick = (e) => {
-                e.stopPropagation(); 
-                copyToClipboard(targetText, `✅ ${i+1}번 묶음 복사 완료!`);
-            };
-            
-            header.appendChild(title);
-            header.appendChild(info); // 글자수 먼저 넣고
-            header.appendChild(copyBtn); // 그 다음에 복사 버튼
-            
+            copyBtn.onclick = (e) => { e.stopPropagation(); copyToClipboard(targetText, `✅ ${i+1}번 복사 완료!`); };
+            header.appendChild(title); header.appendChild(info); header.appendChild(copyBtn);
             const body = document.createElement('div');
             body.className = 'chunk-body';
-            const area = document.createElement('textarea');
-            area.readOnly = true;
-            area.value = text;
-            body.appendChild(area);
-            
-            box.appendChild(header);
-            box.appendChild(body);
-            container.appendChild(box);
+            const area = document.createElement('textarea'); area.readOnly = true; area.value = text;
+            body.appendChild(area); box.appendChild(header); box.appendChild(body); container.appendChild(box);
         });
     }
 
     function mergeHistory() {
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         const cbs = document.querySelectorAll('.history-checkbox:checked');
-        if(!cbs.length) return showToast("⚠️ 항목을 선택해주세요!");
+        if(!cbs.length) return showToast("⚠️ 항목을 선택해주세요!", true); // 🔴 빨간색
         let ids = Array.from(cbs).map(cb => parseInt(cb.value)).sort((a,b)=>b-a);
         let merged = ids.map(id => history[id].text).join('\n\n');
         document.getElementById('output_box').value = merged;
         updateCount('output_box', 'output_count');
         createChunkUI(splitReports(merged));
-        showToast("✅ 취합 완료!");
+        showToast("✅ 취합 완료!"); // 🟢 초록색
     }
 
     function splitReports(text) {
@@ -405,6 +380,8 @@
 
     function processText() {
         const input = document.getElementById('input_box').value.trimEnd().split('\n');
+        if (!input.join('').trim()) return showToast("⚠️ 변환할 내용이 없습니다.", true); // 🔴 빨간색
+        
         const result = []; let isFixed = false, lastWasTitle = false;
         for (let line of input) {
             const ind = line.length - line.trimStart().length, clean = line.trim();
@@ -424,7 +401,7 @@
         updateCount('output_box', 'output_count');
         saveHistory(out);
         createChunkUI(splitReports(out));
-        showToast("✅ 변환 완료!");
+        showToast("✅ 변환 완료!"); // 🟢 초록색
     }
 
     function saveConfig() {
@@ -450,7 +427,8 @@
         saveConfig(); if(!silent) showToast("✅ 양식 적용 완료!");
     }
     function copyProgress() {
-        const name = document.getElementById('cfg_name').value.trim(); if(!name) return showToast("⚠️ 이름 먼저!");
+        const name = document.getElementById('cfg_name').value.trim(); 
+        if(!name) return showToast("⚠️ 이름을 먼저 입력해주세요!", true); // 🔴 빨간색
         const t = new Date(), txt = `(${name}, 100%, ${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')})`;
         copyToClipboard(txt, `✅ ${txt}`);
     }
@@ -462,7 +440,13 @@
             if (lineInd === ind) {
                 if (type === 'num' && /^\d+\./.test(clean)) return (parseInt(clean.match(/^(\d+)/)[1])+1) + ". ";
                 if (type === 'alpha' && /^[a-z]\./.test(clean)) return String.fromCharCode(clean.charCodeAt(0)+1) + ". ";
-                if (type === 'roman' && /^[ivx]+\./.test(clean)) { let idx = ROMANS.indexOf(clean.match(/^([ivx]+)/)[1]); return ROMANS[idx+1] + ". "; }
+                if (type === 'roman' && /^[ivx]+\./.test(clean)) { 
+                    const match = clean.match(/^([ivx]+)/);
+                    if (match) {
+                        let idx = ROMANS.indexOf(match[1]);
+                        return (idx !== -1 && idx < ROMANS.length - 1) ? ROMANS[idx+1] + ". " : "i. ";
+                    }
+                }
             }
             if (lineInd < ind && clean) break;
         }
