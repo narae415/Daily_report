@@ -2,39 +2,46 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Daily Report Maker (Web Edition)</title>
+    <title>Daily Report Maker</title>
+    
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    
     <style>
-        /* [1] 기본 초기화 & 폰트 설정 */
+        /* [1] 기본 초기화 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        
         .app-container { background: #fff; width: 100%; max-width: 1400px; height: 88vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; flex-direction: row; overflow: hidden; }
         
-        /* [2] 좌측 LNB (히스토리 영역) */
-        .lnb { width: 260px; background: #F8F9FA; border-right: 2px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
-        .lnb-header { padding: 15px; font-size: 15px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; }
-        .select-all-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #666; font-weight: bold; }
-        .select-all-bar input[type="checkbox"] { transform: scale(1.1); cursor: pointer; accent-color: #03A9F4; }
+        /* [2] 좌측 LNB (히스토리 영역) - 경계 정밀 교정 */
+        .lnb { width: 260px; background: #F8F9FA; border-right: 1px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
+        
+        /* 상단 탭 높이 43px와 완벽 일치 */
+        .lnb-header { height: 43px; padding: 0 15px; font-size: 14px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; display: flex; align-items: center; justify-content: space-between; }
+        
+        .select-all-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 10px; font-size: 11px; color: #666; font-weight: bold; }
+        input[type="checkbox"] { transform: scale(1.0); cursor: pointer; accent-color: #03A9F4; }
 
-        .lnb-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .history-item { padding: 10px; background: #fff; border: 1px solid #E0E0E0; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+        .lnb-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; background: #F8F9FA; }
+        .history-item { padding: 10px; background: #fff; border: 1px solid #E0E0E0; border-radius: 6px; cursor: pointer; transition: 0.2s; display: flex; align-items: flex-start; gap: 8px; }
         .history-item:hover { border-color: #B3E5FC; background: #FAFDFF; }
         .history-item.selected { border-color: #81D4FA; background: #F1F9FF; }
         
-        .history-checkbox { transform: scale(1.1); cursor: pointer; accent-color: #03A9F4; margin-top: 2px; }
-        .history-time { font-size: 11px; color: #888; margin-bottom: 4px; font-weight: bold; }
+        .history-time { font-size: 10px; color: #888; margin-bottom: 3px; font-weight: bold; }
         .history-preview { font-size: 11px; color: #555; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
         .history-empty { text-align: center; color: #888; font-size: 12px; padding: 30px 10px; }
         
-        .lnb-actions { padding: 12px; border-top: 1px solid #E0E0E0; background: #fff; display: flex; gap: 6px; }
+        /* 하단 액션바: 본문 textarea 하단 끝선과 일치하도록 조정 */
+        .lnb-actions { height: 55px; padding: 10px 12px; border-top: 1px solid #E0E0E0; background: #fff; display: flex; gap: 6px; align-items: center; }
         
-        /* [3] 우측 메인 컨텐츠 영역 */
+        /* [3] 우측 메인 영역 */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
-        .top-nav { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #E0E0E0; }
-        .tab-header { display: flex; flex: 1; }
-        .tab-btn { flex: 1; max-width: 180px; padding: 12px 0; border: none; background: transparent; font-size: 14px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; }
-        .tab-btn:hover { background: #F0F0F0; }
-        .tab-btn.active { background: #757575; color: #FFFFFF; border-radius: 8px 8px 0 0; }
-        .nav-actions { padding: 0 15px 8px 0; display: flex; align-items: center; gap: 8px; }
+        .top-nav { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #E0E0E0; height: 43px; }
+        .tab-header { display: flex; flex: 1; height: 100%; }
+        .tab-btn { flex: 1; max-width: 160px; height: 100%; border: none; background: transparent; font-size: 13px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; border-right: 1px solid #EEE; }
+        .tab-btn.active { background: #757575; color: #FFFFFF; border-right: none; }
+        
+        .nav-actions { padding-right: 15px; display: flex; align-items: center; gap: 8px; height: 100%; }
         
         .tab-content { flex: 1; padding: 20px; display: none; flex-direction: column; overflow: hidden; }
         .tab-content.active { display: flex; }
@@ -51,10 +58,9 @@
         /* 분할 묶음 디자인 */
         .chunk-box { width: 100%; border: 1px solid #E0E0E0; border-radius: 6px; margin-bottom: 8px; overflow: hidden; background: #fff; }
         .chunk-header { display: flex; justify-content: space-between; align-items: center; background: #FFFDE7; padding: 8px 12px; cursor: pointer; }
-        .chunk-header:hover { background: #FFF9C4; }
-        .chunk-title { font-size: 12px; font-weight: bold; color: #F57F17; }
+        .chunk-title { font-size: 11px; font-weight: bold; color: #F57F17; }
         .chunk-body { display: none; padding: 10px; background: #FAFAFA; border-top: 1px solid #EEE; }
-        .chunk-body textarea { height: 100px; font-size: 11px; background: transparent; border: none; padding: 0; width: 100%; resize: none; outline: none; line-height: 1.5; }
+        .chunk-body textarea { height: 80px; font-size: 11px; background: transparent; border: none; padding: 0; width: 100%; resize: none; outline: none; line-height: 1.5; }
         .chunk-box.open .chunk-body { display: block; }
 
         textarea { width: 100%; flex: 1; border: 1px solid #E0E0E0; border-radius: 8px; padding: 12px; font-family: 'Malgun Gothic', sans-serif; font-size: 13px; resize: none; outline: none; transition: 0.2s; line-height: 1.6; }
@@ -64,12 +70,12 @@
         .converter-layout { display: flex; gap: 15px; height: 100%; }
         .pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .pane-title { font-size: 14px; font-weight: bold; }
+        .pane-title { font-size: 13px; font-weight: bold; color: #555; }
         .header-buttons { display: flex; gap: 5px; }
         .mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; gap: 8px; }
         
-        .chunk-container { display: flex; flex-direction: column; overflow-y: auto; max-height: 250px; padding-top: 5px; }
-        .chunk-label { font-size: 12px; font-weight: bold; color: #FF5722; margin-bottom: 8px; display: none; }
+        .chunk-container { display: flex; flex-direction: column; overflow-y: auto; max-height: 220px; padding-top: 5px; }
+        .chunk-label { font-size: 11px; font-weight: bold; color: #FF5722; margin-bottom: 8px; display: none; }
 
         .config-bar { display: flex; align-items: center; gap: 12px; background: #FCFCFC; border: 1px solid #E0E0E0; padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; }
         .config-bar input { padding: 6px 10px; border: 1px solid #E0E0E0; border-radius: 6px; outline: none; font-family: inherit; font-size: 12px; }
@@ -82,32 +88,30 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.2s; }
         .modal-overlay.show { display: flex; opacity: 1; }
         .modal-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
-        .modal-overlay.show .modal-content { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 15px; margin-bottom: 15px; }
         .modal-title { font-size: 18px; font-weight: bold; color: #333; }
         
-        /* ✨ 도움말 내부 스타일 ✨ */
         .help-section { margin-bottom: 20px; }
         .help-section h3 { font-size: 15px; color: #03A9F4; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-        .help-section ul { list-style: none; padding-left: 5px; }
-        .help-section li { font-size: 13px; color: #555; line-height: 1.8; margin-bottom: 4px; }
-        .help-section li::before { content: "•"; color: #03A9F4; font-weight: bold; display: inline-block; width: 15px; }
-        .help-accent { font-weight: bold; color: #333; }
+        .help-section li { font-size: 13px; color: #555; line-height: 1.8; margin-bottom: 4px; list-style: none; }
+        .help-section li::before { content: "•"; color: #03A9F4; margin-right: 10px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div class="lnb">
-        <div class="lnb-header">🕒 변환 히스토리</div>
-        <div class="select-all-bar">
-            <input type="checkbox" id="master_checkbox" onclick="toggleSelectAll(this)">
-            <label for="master_checkbox" style="cursor: pointer;">전체 선택/해제</label>
+        <div class="lnb-header">
+            <span>🕒 히스토리</span>
+            <div style="display:flex; align-items:center; gap:5px;">
+                <input type="checkbox" id="master_checkbox" onclick="toggleSelectAll(this)">
+                <label for="master_checkbox" style="font-size:10px; cursor:pointer;">전체</label>
+            </div>
         </div>
         <div class="lnb-list" id="history_list"></div>
         <div class="lnb-actions">
             <button class="btn btn-primary" style="flex: 1;" onclick="mergeHistory()">선택 취합하기</button>
-            <button class="btn btn-clear" style="width: 40px; font-size: 14px;" onclick="deleteHistory()">🗑️</button>
+            <button class="btn btn-clear" style="width: 35px; font-size: 14px;" onclick="deleteHistory()">🗑️</button>
         </div>
     </div>
 
@@ -118,7 +122,7 @@
                 <button class="tab-btn" onclick="switchTab(2)">일보고 작성</button>
             </div>
             <div class="nav-actions">
-                <button class="btn btn-copy" style="width: 24px; height: 24px; border-radius: 50%; padding:0; color: #888;" onclick="openHelp()">?</button>
+                <button class="btn btn-copy" style="width: 22px; height: 22px; border-radius: 50%; padding:0; color: #888;" onclick="openHelp()">?</button>
                 <button class="btn btn-primary" onclick="openWiki()">🔗일보고 바로가기</button>
             </div>
         </div>
@@ -138,7 +142,7 @@
                 </div>
 
                 <div class="mid-buttons">
-                    <button class="btn btn-primary" style="width: 85px; height: 40px;" onclick="processText()">변환하기</button>
+                    <button class="btn btn-primary" style="width: 80px; height: 35px;" onclick="processText()">변환</button>
                 </div>
 
                 <div class="pane">
@@ -161,9 +165,9 @@
         <div id="tab2" class="tab-content">
             <div class="config-bar">
                 <strong>이름:</strong>
-                <input type="text" id="cfg_name" style="width: 100px;">
+                <input type="text" id="cfg_name" style="width: 90px;">
                 <strong style="margin-left:10px;">서비스명:</strong>
-                <input type="text" id="cfg_services" style="width: 350px;" placeholder="ex)회원가입, 로그인, 결제">
+                <input type="text" id="cfg_services" style="width: 320px;" placeholder="ex)회원가입, 로그인, 결제">
                 <button class="btn btn-action btn-copy" onclick="applyFixedFormat()">적용/저장</button>
             </div>
             <div class="action-bar">
@@ -187,33 +191,21 @@
         <div style="overflow-y: auto; padding-right: 5px;">
             <div class="help-section">
                 <h3>1. 변환기능 이용</h3>
-                <ul>
-                    <li><span class="help-accent">공백 변환 규칙:</span> 작성창에 내용을 넣고 변환 시, 위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li>
-                </ul>
+                <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li></ul>
             </div>
-            
             <div class="help-section">
                 <h3>2. 취합기능 이용</h3>
                 <ul>
-                    <li><span class="help-accent">히스토리 저장:</span> 변환기에 적고 [변환하기]를 누른 내용은 좌측 리스트에 자동 저장됩니다.</li>
-                    <li><span class="help-accent">일괄 취합:</span> 히스토리에서 취합할 항목들을 선택 후 [선택 취합하기]를 누르면 한 번에 합쳐집니다.</li>
-                    <li><span class="help-accent">자동 분할:</span> 취합된 내용이 4500자를 초과하면 메신저 전송용으로 자동 분할됩니다.</li>
-                    <li><span class="help-accent">미리보기 및 복사:</span> 생성된 묶음을 클릭해 내용을 확인하고 바로 복사할 수 있습니다.</li>
+                    <li>[변환하기]를 누른 내용은 좌측 히스토리에 저장됩니다.</li>
+                    <li>여러 항목을 선택해 [선택 취합하기]를 누르면 한 번에 합쳐집니다.</li>
+                    <li>4500자 초과 시 자동 분할되며, 묶음을 클릭해 복사할 수 있습니다.</li>
                 </ul>
             </div>
-
             <div class="help-section">
                 <h3>3. 일보고 작성탭 이용</h3>
                 <ul>
-                    <li><span class="help-accent">양식 저장:</span> 이름과 서비스명을 적고 [적용/저장] 시 브라우저에 저장되어 재접속 시에도 유지됩니다.</li>
-                    <li><span class="help-accent">진행률 복사:</span> [복사(이름, 100%, MM/DD)] 버튼으로 내 이름과 오늘 날짜가 포함된 텍스트를 즉시 가져옵니다.</li>
-                </ul>
-            </div>
-
-            <div class="help-section">
-                <h3>4. 일보고 바로가기</h3>
-                <ul>
-                    <li><span class="help-accent">원클릭 이동:</span> 상단 우측 버튼 클릭 시 오늘 날짜의 전사 일일보고 위키 페이지로 즉시 이동합니다.</li>
+                    <li>이름/서비스명을 적고 [적용/저장] 시 폼이 유지됩니다.</li>
+                    <li>[진행률 복사] 버튼으로 이름과 오늘 날짜를 즉시 가져옵니다.</li>
                 </ul>
             </div>
         </div>
@@ -271,7 +263,6 @@
             cb.checked = masterCb.checked;
             cb.closest('.history-item').classList.toggle('selected', masterCb.checked);
         });
-        showToast(masterCb.checked ? "전체 선택됨" : "전체 해제됨");
     }
 
     function renderHistory() {
@@ -316,7 +307,7 @@
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         const cbs = document.querySelectorAll('.history-checkbox:checked');
         if(!cbs.length) {
-            if(confirm("전체 삭제하시겠습니까?")) { localStorage.removeItem('dailyReportHistory'); renderHistory(); showToast("✅ 삭제 완료!"); }
+            if(confirm("기록을 전체 삭제하시겠습니까?")) { localStorage.removeItem('dailyReportHistory'); renderHistory(); showToast("✅ 삭제 완료!"); }
             return;
         }
         if(confirm(`${cbs.length}건을 삭제하시겠습니까?`)) {
@@ -337,17 +328,22 @@
         chunks.forEach((text, i) => {
             const box = document.createElement('div');
             box.className = 'chunk-box';
-            box.innerHTML = `
-                <div class="chunk-header" onclick="this.parentElement.classList.toggle('open')">
-                    <span class="chunk-title">📦 ${i+1}번 묶음 (내용 보기)</span>
-                    <button class="btn btn-primary" style="padding:2px 8px; font-size:10px;" 
-                        onclick="event.stopPropagation(); copyToClipboard(decodeURIComponent('${encodeURIComponent(text)}'), '✅ ${i+1}번 복사 완료!')">복사</button>
-                </div>
-                <div class="chunk-body">
-                    <textarea readonly>${text}</textarea>
-                </div>
-            `;
-            container.appendChild(box);
+            const header = document.createElement('div');
+            header.className = 'chunk-header';
+            header.onclick = () => box.classList.toggle('open');
+            const title = document.createElement('span');
+            title.className = 'chunk-title';
+            title.textContent = `📦 ${i+1}번 묶음 (내용 확인)`;
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn btn-primary';
+            copyBtn.style.cssText = 'padding:2px 8px; font-size:10px;';
+            copyBtn.textContent = '복사';
+            copyBtn.onclick = (e) => { e.stopPropagation(); copyToClipboard(text, `✅ ${i+1}번 복사 완료!`); };
+            header.appendChild(title); header.appendChild(copyBtn);
+            const body = document.createElement('div');
+            body.className = 'chunk-body';
+            const area = document.createElement('textarea'); area.readOnly = true; area.value = text;
+            body.appendChild(area); box.appendChild(header); box.appendChild(body); container.appendChild(box);
         });
     }
 
