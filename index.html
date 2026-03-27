@@ -3,22 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Daily Report Maker</title>
-    
     <link rel="icon" type="image/x-icon" href="icon.ico">
-    
     <style>
         /* [1] 기본 초기화 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        
         .app-container { background: #fff; width: 100%; max-width: 1400px; height: 88vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; flex-direction: row; overflow: hidden; }
         
-        /* [2] 좌측 LNB (히스토리 영역) - 경계 정밀 교정 */
+        /* [2] 좌측 LNB */
         .lnb { width: 260px; background: #F8F9FA; border-right: 1px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
-        
-        /* 상단 탭 높이 43px와 완벽 일치 */
         .lnb-header { height: 43px; padding: 0 15px; font-size: 14px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; display: flex; align-items: center; justify-content: space-between; }
-        
         .select-all-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 10px; font-size: 11px; color: #666; font-weight: bold; }
         input[type="checkbox"] { transform: scale(1.0); cursor: pointer; accent-color: #03A9F4; }
 
@@ -26,12 +20,9 @@
         .history-item { padding: 10px; background: #fff; border: 1px solid #E0E0E0; border-radius: 6px; cursor: pointer; transition: 0.2s; display: flex; align-items: flex-start; gap: 8px; }
         .history-item:hover { border-color: #B3E5FC; background: #FAFDFF; }
         .history-item.selected { border-color: #81D4FA; background: #F1F9FF; }
-        
         .history-time { font-size: 10px; color: #888; margin-bottom: 3px; font-weight: bold; }
         .history-preview { font-size: 11px; color: #555; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
         .history-empty { text-align: center; color: #888; font-size: 12px; padding: 30px 10px; }
-        
-        /* 하단 액션바: 본문 textarea 하단 끝선과 일치하도록 조정 */
         .lnb-actions { height: 55px; padding: 10px 12px; border-top: 1px solid #E0E0E0; background: #fff; display: flex; gap: 6px; align-items: center; }
         
         /* [3] 우측 메인 영역 */
@@ -40,13 +31,12 @@
         .tab-header { display: flex; flex: 1; height: 100%; }
         .tab-btn { flex: 1; max-width: 160px; height: 100%; border: none; background: transparent; font-size: 13px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; border-right: 1px solid #EEE; }
         .tab-btn.active { background: #757575; color: #FFFFFF; border-right: none; }
-        
         .nav-actions { padding-right: 15px; display: flex; align-items: center; gap: 8px; height: 100%; }
         
         .tab-content { flex: 1; padding: 20px; display: none; flex-direction: column; overflow: hidden; }
         .tab-content.active { display: flex; }
 
-        /* 공통 버튼 */
+        /* 버튼 스타일 */
         .btn { border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; color: #333; outline: none; padding: 6px 12px; display: flex; justify-content: center; align-items: center; white-space: nowrap; }
         .btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
         .btn:active { transform: translateY(1px); }
@@ -55,12 +45,13 @@
         .btn-copy { background: #E0E0E0; }
         .btn-primary { background: #D4EFFF; } 
         
-        /* 분할 묶음 디자인 */
+        /* 분할 묶음 박스 (개선됨) */
         .chunk-box { width: 100%; border: 1px solid #E0E0E0; border-radius: 6px; margin-bottom: 8px; overflow: hidden; background: #fff; }
         .chunk-header { display: flex; justify-content: space-between; align-items: center; background: #FFFDE7; padding: 8px 12px; cursor: pointer; }
+        .chunk-header:hover { background: #FFF9C4; }
         .chunk-title { font-size: 11px; font-weight: bold; color: #F57F17; }
         .chunk-body { display: none; padding: 10px; background: #FAFAFA; border-top: 1px solid #EEE; }
-        .chunk-body textarea { height: 80px; font-size: 11px; background: transparent; border: none; padding: 0; width: 100%; resize: none; outline: none; line-height: 1.5; }
+        .chunk-body textarea { height: 80px; font-size: 11px; background: transparent; border: none; padding: 0; width: 100%; resize: none; outline: none; line-height: 1.5; color: #666; }
         .chunk-box.open .chunk-body { display: block; }
 
         textarea { width: 100%; flex: 1; border: 1px solid #E0E0E0; border-radius: 8px; padding: 12px; font-family: 'Malgun Gothic', sans-serif; font-size: 13px; resize: none; outline: none; transition: 0.2s; line-height: 1.6; }
@@ -90,11 +81,10 @@
         .modal-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 15px; margin-bottom: 15px; }
         .modal-title { font-size: 18px; font-weight: bold; color: #333; }
-        
-        .help-section { margin-bottom: 20px; }
-        .help-section h3 { font-size: 15px; color: #03A9F4; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-        .help-section li { font-size: 13px; color: #555; line-height: 1.8; margin-bottom: 4px; list-style: none; }
-        .help-section li::before { content: "•"; color: #03A9F4; margin-right: 10px; }
+        .help-section { margin-bottom: 15px; }
+        .help-section h3 { font-size: 14px; color: #03A9F4; margin-bottom: 5px; }
+        .help-section li { font-size: 12px; color: #555; list-style: none; margin-bottom: 3px; }
+        .help-section li::before { content: "•"; color: #03A9F4; margin-right: 8px; }
     </style>
 </head>
 <body>
@@ -188,24 +178,17 @@
             <div class="modal-title">📖 사용법 및 주의사항</div>
             <button class="btn btn-clear" style="width: 30px; font-size: 20px;" onclick="closeHelp()">×</button>
         </div>
-        <div style="overflow-y: auto; padding-right: 5px;">
+        <div style="overflow-y: auto;">
             <div class="help-section">
-                <h3>1. 변환기능 이용</h3>
-                <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li></ul>
+                <h3>1. 변환기능</h3>
+                <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백을 추가합니다.</li></ul>
             </div>
             <div class="help-section">
-                <h3>2. 취합기능 이용</h3>
+                <h3>2. 취합기능</h3>
                 <ul>
-                    <li>[변환하기]를 누른 내용은 좌측 히스토리에 저장됩니다.</li>
-                    <li>여러 항목을 선택해 [선택 취합하기]를 누르면 한 번에 합쳐집니다.</li>
-                    <li>4500자 초과 시 자동 분할되며, 묶음을 클릭해 복사할 수 있습니다.</li>
-                </ul>
-            </div>
-            <div class="help-section">
-                <h3>3. 일보고 작성탭 이용</h3>
-                <ul>
-                    <li>이름/서비스명을 적고 [적용/저장] 시 폼이 유지됩니다.</li>
-                    <li>[진행률 복사] 버튼으로 이름과 오늘 날짜를 즉시 가져옵니다.</li>
+                    <li>[변환하기] 클릭 시 좌측 히스토리에 자동 저장됩니다.</li>
+                    <li>여러 항목을 선택해 [선택 취합하기]로 합칠 수 있습니다.</li>
+                    <li>4500자 초과 시 자동 분할되며, 묶음을 클릭해 복사 가능합니다.</li>
                 </ul>
             </div>
         </div>
@@ -215,16 +198,16 @@
 <div id="toast">알림 메시지</div>
 
 <script>
-    function showToast(msg, isError=false) {
+    function showToast(msg) {
         const toast = document.getElementById('toast');
         toast.textContent = msg;
-        toast.className = isError ? 'error show' : 'show';
-        setTimeout(() => toast.className = toast.className.replace('show', '').trim(), 1500);
+        toast.className = 'show';
+        setTimeout(() => toast.className = '', 1500);
     }
 
     function switchTab(tabNum) {
-        document.querySelectorAll('.tab-btn').forEach((btn, idx) => { btn.classList.toggle('active', idx + 1 === tabNum); });
-        document.querySelectorAll('.tab-content').forEach((content, idx) => { content.classList.toggle('active', idx + 1 === tabNum); });
+        document.querySelectorAll('.tab-btn').forEach((btn, idx) => btn.classList.toggle('active', idx + 1 === tabNum));
+        document.querySelectorAll('.tab-content').forEach((content, idx) => content.classList.toggle('active', idx + 1 === tabNum));
     }
 
     function openWiki() {
@@ -251,7 +234,7 @@
     }
 
     function copyToClipboard(text, successMsg) {
-        if(!text.trim()) return showToast("⚠️ 내용이 없어요!", true);
+        if(!text.trim()) return showToast("⚠️ 내용이 없어요!");
         navigator.clipboard.writeText(text).then(() => showToast(successMsg));
     }
 
@@ -318,6 +301,7 @@
         }
     }
 
+    /* ✨ 묶음 복사 버그 수정 핵심 로직 ✨ */
     function createChunkUI(chunks) {
         const container = document.getElementById('chunk_buttons');
         container.innerHTML = '';
@@ -328,29 +312,47 @@
         chunks.forEach((text, i) => {
             const box = document.createElement('div');
             box.className = 'chunk-box';
+            
             const header = document.createElement('div');
             header.className = 'chunk-header';
             header.onclick = () => box.classList.toggle('open');
+            
             const title = document.createElement('span');
             title.className = 'chunk-title';
-            title.textContent = `📦 ${i+1}번 묶음 (내용 확인)`;
+            title.textContent = `📦 ${i+1}번 묶음 (내용 보기)`;
+            
             const copyBtn = document.createElement('button');
             copyBtn.className = 'btn btn-primary';
             copyBtn.style.cssText = 'padding:2px 8px; font-size:10px;';
             copyBtn.textContent = '복사';
-            copyBtn.onclick = (e) => { e.stopPropagation(); copyToClipboard(text, `✅ ${i+1}번 복사 완료!`); };
-            header.appendChild(title); header.appendChild(copyBtn);
+            
+            // ✨ 클로저 문제 해결을 위해 개별 텍스트를 고정함 ✨
+            const targetText = text; 
+            copyBtn.onclick = (e) => {
+                e.stopPropagation(); 
+                copyToClipboard(targetText, `✅ ${i+1}번 묶음 복사 완료!`);
+            };
+            
+            header.appendChild(title);
+            header.appendChild(copyBtn);
+            
             const body = document.createElement('div');
             body.className = 'chunk-body';
-            const area = document.createElement('textarea'); area.readOnly = true; area.value = text;
-            body.appendChild(area); box.appendChild(header); box.appendChild(body); container.appendChild(box);
+            const area = document.createElement('textarea');
+            area.readOnly = true;
+            area.value = text;
+            body.appendChild(area);
+            
+            box.appendChild(header);
+            box.appendChild(body);
+            container.appendChild(box);
         });
     }
 
     function mergeHistory() {
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         const cbs = document.querySelectorAll('.history-checkbox:checked');
-        if(!cbs.length) return showToast("⚠️ 항목을 선택해주세요!", true);
+        if(!cbs.length) return showToast("⚠️ 항목을 선택해주세요!");
         let ids = Array.from(cbs).map(cb => parseInt(cb.value)).sort((a,b)=>b-a);
         let merged = ids.map(id => history[id].text).join('\n\n');
         document.getElementById('output_box').value = merged;
@@ -422,7 +424,7 @@
         saveConfig(); if(!silent) showToast("✅ 양식 적용 완료!");
     }
     function copyProgress() {
-        const name = document.getElementById('cfg_name').value.trim(); if(!name) return showToast("⚠️ 이름 먼저!", true);
+        const name = document.getElementById('cfg_name').value.trim(); if(!name) return showToast("⚠️ 이름 먼저!");
         const t = new Date(), txt = `(${name}, 100%, ${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')})`;
         copyToClipboard(txt, `✅ ${txt}`);
     }
