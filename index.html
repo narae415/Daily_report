@@ -9,56 +9,87 @@
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .app-container { background: #fff; width: 100%; max-width: 1200px; height: 85vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; flex-direction: column; overflow: hidden; }
         
-        /* [2] 탭 디자인 (시크한 진회색 활성화!) */
-        .tab-header { display: flex; background: #F8F9FA; border-bottom: 2px solid #E0E0E0; }
+        /* ✨ [2] 상단 네비게이션 & 탭 디자인 (위키 버튼 우측 배치) ✨ */
+        .top-nav { display: flex; justify-content: space-between; align-items: flex-end; background: #F8F9FA; border-bottom: 2px solid #E0E0E0; }
+        .tab-header { display: flex; flex: 1; }
         .tab-btn { flex: 1; max-width: 200px; padding: 15px 0; border: none; background: transparent; font-size: 15px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; }
         .tab-btn:hover { background: #F0F0F0; }
         .tab-btn.active { background: #757575; color: #FFFFFF; border-radius: 8px 8px 0 0; }
+        
+        .nav-actions { padding: 0 20px 10px 0; } /* 위키 버튼 여백 */
+        
         .tab-content { flex: 1; padding: 25px; display: none; flex-direction: column; overflow: hidden; }
         .tab-content.active { display: flex; }
 
-        /* [3] 공통 UI (버튼, 입력창 등) */
-        .btn { padding: 8px 16px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; color: #333; outline: none; }
+        /* ✨ [3] 공통 UI (버튼 크기 통일 & 색상 변경) ✨ */
+        .btn { border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; color: #333; outline: none; padding: 8px 0; }
         .btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
         .btn:active { transform: translateY(1px); }
         
+        /* 복사, Clear 버튼 크기를 90px로 완벽히 통일! */
+        .btn-action { width: 90px; text-align: center; } 
+        
         .btn-clear { background: #FFEBEE; color: #E57373; }
         .btn-copy { background: #E0E0E0; }
-        .btn-primary { background: #B3E5FC; }
-        .btn-chunk { background: #FFF59D; margin-right: 8px; }
+        
+        /* 파란색 버튼들을 아주 연한 파스텔 하늘색으로 변경! */
+        .btn-primary { background: #D4EFFF; padding: 8px 16px; } 
+        .btn-chunk { background: #FFF59D; margin-right: 8px; padding: 8px 16px; }
 
         textarea { width: 100%; flex: 1; border: 1px solid #E0E0E0; border-radius: 8px; padding: 15px; font-family: 'Malgun Gothic', sans-serif; font-size: 14px; resize: none; outline: none; transition: 0.2s; line-height: 1.6; }
         textarea:focus { border-color: #757575; box-shadow: 0 0 0 3px rgba(117,117,117,0.1); }
         .char-count { text-align: right; font-size: 12px; color: #888; margin-top: 5px; }
 
-        /* [4] 탭 1: 공백 변환기 레이아웃 */
+        /* [4] 레이아웃 */
         .converter-layout { display: flex; gap: 20px; height: 100%; }
         .pane { flex: 1; display: flex; flex-direction: column; }
         .pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .pane-title { font-size: 15px; font-weight: bold; }
-        .mid-buttons { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 10px; }
+        .mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 0 10px; }
         .chunk-container { display: flex; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 5px; min-height: 35px; }
         .chunk-label { font-size: 13px; font-weight: bold; color: #FF5722; margin-right: 10px; display: none; }
 
-        /* [5] 탭 2: 일보고 작성 레이아웃 */
         .config-bar { display: flex; align-items: center; gap: 15px; background: #FCFCFC; border: 1px solid #E0E0E0; padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; }
         .config-bar input { padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 6px; outline: none; font-family: inherit; font-size: 13px; }
         .config-bar input:focus { border-color: #757575; }
         .action-bar { display: flex; justify-content: space-between; margin-bottom: 15px; }
         .action-left { display: flex; gap: 10px; }
 
-        /* [6] 토스트 팝업 (웹 애니메이션!) */
+        /* [5] 토스트 팝업 */
         #toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; z-index: 1000; }
         #toast.show { opacity: 1; transform: translateY(0); }
         #toast.error { background: #F44336; }
+
+        /* [6] 모달 (다중 선택 히스토리) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.2s; }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-content { background: #fff; width: 90%; max-width: 550px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
+        .modal-overlay.show .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 15px; margin-bottom: 15px; }
+        .modal-title { font-size: 18px; font-weight: bold; color: #333; }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; transition: 0.2s; }
+        .modal-close:hover { color: #F44336; }
+        .history-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
+        .history-item { padding: 15px; background: #F8F9FA; border: 2px solid #E0E0E0; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 15px; }
+        .history-item:hover { background: #F0F8FF; border-color: #B3E5FC; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .history-checkbox { transform: scale(1.4); cursor: pointer; accent-color: #03A9F4; }
+        .history-time { font-size: 12px; color: #888; margin-bottom: 6px; font-weight: bold; }
+        .history-preview { font-size: 13px; color: #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+        .history-empty { text-align: center; color: #888; font-size: 14px; padding: 30px; }
+        .history-actions { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #E0E0E0; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="tab-header">
-        <button class="tab-btn active" onclick="switchTab(1)">공백 변환기</button>
-        <button class="tab-btn" onclick="switchTab(2)">일보고 작성</button>
+    <div class="top-nav">
+        <div class="tab-header">
+            <button class="tab-btn active" onclick="switchTab(1)">공백 변환기</button>
+            <button class="tab-btn" onclick="switchTab(2)">일보고 작성</button>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-primary" onclick="openWiki()">🔗일보고 바로가기</button>
+        </div>
     </div>
 
     <div id="tab1" class="tab-content active">
@@ -67,31 +98,31 @@
                 <div class="pane-header">
                     <span class="pane-title">작성창</span>
                     <div>
-                        <button class="btn btn-clear" onclick="clearText('input_box')">Clear</button>
-                        <button class="btn btn-copy" onclick="copyText('input_box')">전체 복사</button>
+                        <button class="btn btn-action btn-clear" onclick="clearText('input_box')">Clear</button>
+                        <button class="btn btn-action btn-copy" onclick="copyText('input_box')">전체 복사</button>
                     </div>
                 </div>
-                <textarea id="input_box" oninput="updateCount('input_box', 'input_count')"></textarea>
+                <textarea id="input_box"></textarea>
                 <div id="input_count" class="char-count">글자 수: 0자</div>
             </div>
 
             <div class="mid-buttons">
-                <button class="btn btn-primary" style="padding: 15px 20px; font-size: 14px;" onclick="processText()">변환하기</button>
-                <button class="btn btn-primary" style="padding: 12px 20px;" onclick="openWiki()">WIKI 바로가기</button>
+                <button class="btn btn-primary" style="width: 100px; height: 50px; font-size: 15px;" onclick="processText()">변환하기</button>
+                <button class="btn btn-copy btn-action" onclick="openHistory()">🕒 히스토리</button>
             </div>
 
             <div class="pane">
                 <div class="pane-header">
                     <span class="pane-title">변환 결과</span>
                     <div>
-                        <button class="btn btn-clear" onclick="clearText('output_box')">Clear</button>
-                        <button class="btn btn-copy" onclick="copyText('output_box')">전체 복사</button>
+                        <button class="btn btn-action btn-clear" onclick="clearText('output_box')">Clear</button>
+                        <button class="btn btn-action btn-copy" onclick="copyText('output_box')">전체 복사</button>
                     </div>
                 </div>
                 <textarea id="output_box" readonly style="background: #FAFAFA;"></textarea>
                 <div class="chunk-container" id="chunk_buttons">
                     <span class="chunk-label" id="chunk_label">💡 메신저 분할(4500자):</span>
-                    </div>
+                </div>
                 <div id="output_count" class="char-count" style="margin-top:0;">전체 글자 수: 0자</div>
             </div>
         </div>
@@ -103,19 +134,32 @@
             <input type="text" id="cfg_name" style="width: 100px;">
             <strong style="margin-left:10px;">서비스명:</strong>
             <input type="text" id="cfg_services" style="width: 350px;">
-            <button class="btn btn-copy" onclick="applyFixedFormat()">적용/저장</button>
+            <button class="btn btn-action btn-copy" onclick="applyFixedFormat()">적용/저장</button>
         </div>
         
         <div class="action-bar">
             <div class="action-left">
-                <button class="btn btn-copy" onclick="copyProgress()">진행률 복사</button>
-                <button class="btn btn-copy" onclick="copyText('smart_input')">내용 복사</button>
-                <button class="btn btn-primary" onclick="openWiki()">WIKI 바로가기</button>
+                <button class="btn btn-action btn-copy" style="width: 100px;" onclick="copyProgress()">진행률 복사</button>
+                <button class="btn btn-action btn-copy" onclick="copyText('smart_input')">내용 복사</button>
             </div>
-            <button class="btn btn-clear" onclick="clearText('smart_input')">Clear</button>
+            <button class="btn btn-action btn-clear" onclick="clearText('smart_input')">Clear</button>
         </div>
-
         <textarea id="smart_input"></textarea>
+    </div>
+</div>
+
+<div id="history_modal" class="modal-overlay" onclick="if(event.target===this) closeHistory()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">🕒 변환 결과 취합 (선택 후 합치기)</div>
+            <button class="modal-close" onclick="closeHistory()">×</button>
+        </div>
+        <div class="history-list" id="history_list">
+            </div>
+        <div class="history-actions">
+            <button class="btn btn-action btn-clear" style="width: 110px;" onclick="clearHistoryData()">전체 삭제</button>
+            <button class="btn btn-primary" style="padding: 10px 20px; font-size: 14px;" onclick="mergeHistory()">선택 취합하기</button>
+        </div>
     </div>
 </div>
 
@@ -123,7 +167,7 @@
 
 <script>
     /* =========================================
-       [1] 공통 유틸리티 (토스트, 탭, WIKI)
+       [1] 공통 유틸리티
     ========================================= */
     function showToast(msg, isError=false) {
         const toast = document.getElementById('toast');
@@ -133,56 +177,52 @@
     }
 
     function switchTab(tabNum) {
-        document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
-            btn.classList.toggle('active', idx + 1 === tabNum);
-        });
-        document.querySelectorAll('.tab-content').forEach((content, idx) => {
-            content.classList.toggle('active', idx + 1 === tabNum);
-        });
+        document.querySelectorAll('.tab-btn').forEach((btn, idx) => { btn.classList.toggle('active', idx + 1 === tabNum); });
+        document.querySelectorAll('.tab-content').forEach((content, idx) => { content.classList.toggle('active', idx + 1 === tabNum); });
     }
 
     function openWiki() {
         const today = new Date();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
-        const url = `http://wiki.duzon.com:8080/display/DW/[WE1U-QA-Cell]+${mm}.${dd}+::+2026`;
-        window.open(url, '_blank');
+        window.open(`http://wiki.duzon.com:8080/display/DW/[WE1U-QA-Cell]+${mm}.${dd}+::+2026`, '_blank');
     }
 
     function updateCount(inputId, labelId) {
         const text = document.getElementById(inputId).value;
-        const count = text.replace(/\n+$/, '').length; // 끝부분 줄바꿈 제외
+        const count = text.replace(/\n+$/, '').length; 
         document.getElementById(labelId).textContent = (inputId === 'output_box' ? '전체 글자 수: ' : '글자 수: ') + count + '자';
     }
 
     function clearText(targetId) {
-        if(confirm(targetId === 'smart_input' ? "작성 중인 본문 내용을 모두 지우시겠습니까?\n(이름과 서비스명은 유지됩니다.)" : "내용을 모두 지우시겠습니까?")) {
+        const isSmart = (targetId === 'smart_input');
+        if(confirm(isSmart ? "작성 중인 본문 내용을 모두 지우시겠습니까?\n(이름과 서비스명은 유지됩니다.)" : "내용을 모두 지우시겠습니까?")) {
             document.getElementById(targetId).value = "";
             if(targetId === 'input_box') updateCount('input_box', 'input_count');
+            saveConfig(); 
         }
     }
 
     function copyToClipboard(text, successMsg) {
         if(!text.trim()) return showToast("⚠️ 내용이 없어요!", true);
         navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(() => {
-            // 구형 브라우저 대응 (Fallback)
             const ta = document.createElement('textarea');
             ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
             showToast(successMsg);
         });
     }
 
-    function copyText(targetId) {
-        copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!");
-    }
+    function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
 
     /* =========================================
-       [2] 설정 (Config) 관리 (LocalStorage 사용)
+       [2] 설정 & 임시저장
     ========================================= */
     function saveConfig() {
         const data = {
             name: document.getElementById('cfg_name').value.trim(),
-            services: document.getElementById('cfg_services').value.trim()
+            services: document.getElementById('cfg_services').value.trim(),
+            inputBoxText: document.getElementById('input_box').value,
+            smartInputText: document.getElementById('smart_input').value
         };
         localStorage.setItem('dailyReportConfig', JSON.stringify(data));
     }
@@ -192,45 +232,136 @@
         if (data) {
             document.getElementById('cfg_name').value = data.name || "";
             document.getElementById('cfg_services').value = data.services || "";
-            applyFixedFormat(true); // 조용히 적용
+            document.getElementById('input_box').value = data.inputBoxText || "";
+            document.getElementById('smart_input').value = data.smartInputText || "";
+            updateCount('input_box', 'input_count');
+            if (!data.smartInputText || data.smartInputText.trim() === "") applyFixedFormat(true);
         }
     }
 
+    document.getElementById('input_box').addEventListener('input', () => { updateCount('input_box', 'input_count'); saveConfig(); });
+    document.getElementById('smart_input').addEventListener('input', saveConfig);
+    document.getElementById('cfg_name').addEventListener('input', saveConfig);
+    document.getElementById('cfg_services').addEventListener('input', saveConfig);
+
     /* =========================================
-       [3] 스마트 분할 로직 (4500자 제한)
+       [3] 다중 선택 취합 히스토리
+    ========================================= */
+    function saveHistory(text) {
+        if(!text.trim()) return;
+        let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
+        const now = new Date();
+        const timeStr = `${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        
+        if (history.length > 0 && history[0].text === text) return;
+
+        history.unshift({ time: timeStr, text: text });
+        if(history.length > 20) history.pop(); 
+        localStorage.setItem('dailyReportHistory', JSON.stringify(history));
+    }
+
+    function openHistory() {
+        const list = document.getElementById('history_list');
+        let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
+        list.innerHTML = '';
+        
+        if(history.length === 0) {
+            list.innerHTML = '<div class="history-empty">아직 저장된 변환 기록이 없어요!</div>';
+        } else {
+            history.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.onclick = function(e) {
+                    const cb = this.querySelector('.history-checkbox');
+                    if(e.target !== cb) cb.checked = !cb.checked;
+                    this.style.borderColor = cb.checked ? '#03A9F4' : '#E0E0E0';
+                    this.style.background = cb.checked ? '#F0F8FF' : '#F8F9FA';
+                };
+                
+                div.innerHTML = `
+                    <input type="checkbox" class="history-checkbox" value="${idx}">
+                    <div style="flex:1; overflow:hidden;">
+                        <div class="history-time">🕒 ${item.time}</div>
+                        <div class="history-preview">${item.text.replace(/\n/g, ' ')}</div>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+        document.getElementById('history_modal').classList.add('show');
+    }
+
+    function closeHistory() { document.getElementById('history_modal').classList.remove('show'); }
+
+    function clearHistoryData() {
+        if(confirm("저장된 히스토리를 모두 삭제하시겠습니까?")) {
+            localStorage.removeItem('dailyReportHistory');
+            openHistory();
+            showToast("✅ 전체 삭제 완료!");
+        }
+    }
+
+    function mergeHistory() {
+        let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
+        const checkboxes = document.querySelectorAll('.history-checkbox:checked');
+        
+        if(checkboxes.length === 0) {
+            return showToast("⚠️ 취합할 일보고를 하나 이상 선택해주세요!", true);
+        }
+        
+        let selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.value)).sort((a, b) => b - a);
+        let mergedText = selectedIndices.map(idx => history[idx].text).join('\n\n');
+        
+        document.getElementById('output_box').value = mergedText;
+        updateCount('output_box', 'output_count');
+        
+        const container = document.getElementById('chunk_buttons');
+        const label = document.getElementById('chunk_label');
+        container.innerHTML = ''; container.appendChild(label); 
+        
+        const chunks = splitReports(mergedText, 4500);
+        if (chunks.length > 1) {
+            label.style.display = 'inline-block';
+            chunks.forEach((chunk, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-chunk';
+                btn.textContent = `${i + 1}번 묶음`;
+                btn.onclick = () => copyToClipboard(chunk, `✅ ${i + 1}번 묶음 복사 완료!`);
+                container.appendChild(btn);
+            });
+        } else { label.style.display = 'none'; }
+        
+        showToast(`✅ ${checkboxes.length}명 취합 및 분할 세팅 완료!`);
+        closeHistory();
+    }
+
+    /* =========================================
+       [4] 스마트 분할 로직 (4500자 제한)
     ========================================= */
     function splitReports(text, maxLen = 4500) {
         const lines = text.split('\n');
-        const people = [];
-        let currentPerson = [];
-        
+        const people = []; let currentPerson = [];
         for (let line of lines) {
             if (line.startsWith('■ ')) {
                 if (currentPerson.length > 0) people.push(currentPerson.join('\n'));
                 currentPerson = [line];
-            } else {
-                currentPerson.push(line);
-            }
+            } else { currentPerson.push(line); }
         }
         if (currentPerson.length > 0) people.push(currentPerson.join('\n'));
         
-        const chunks = [];
-        let currentChunk = "";
-        
+        const chunks = []; let currentChunk = "";
         for (let p of people) {
             if (currentChunk.length + p.length + 2 > maxLen) {
                 if (currentChunk) chunks.push(currentChunk.trim());
                 currentChunk = p;
-            } else {
-                currentChunk = currentChunk ? currentChunk + "\n\n" + p : p;
-            }
+            } else { currentChunk = currentChunk ? currentChunk + "\n\n" + p : p; }
         }
         if (currentChunk) chunks.push(currentChunk.trim());
         return chunks;
     }
 
     /* =========================================
-       [4] 공백 변환기 로직 (Python -> JS 완벽 이식)
+       [5] 공백 변환기 로직
     ========================================= */
     function processText() {
         const inputLines = document.getElementById('input_box').value.trimEnd().split('\n');
@@ -240,33 +371,22 @@
         for (let line of inputLines) {
             const originalIndent = line.length - line.trimStart().length;
             const clean = line.trim();
-            
             if (!clean) { result.push(""); continue; }
-            if (clean.startsWith('■') || clean === '[업무]') {
-                isFixed = true; result.push(clean); continue;
-            }
-            if (clean.startsWith('[') && clean !== '[업무]') {
-                isFixed = false; result.push(clean); lastWasTitle = true; continue;
-            }
+            if (clean.startsWith('■') || clean === '[업무]') { isFixed = true; result.push(clean); continue; }
+            if (clean.startsWith('[') && clean !== '[업무]') { isFixed = false; result.push(clean); lastWasTitle = true; continue; }
             if (isFixed) { result.push(line.trimEnd()); continue; }
             if (originalIndent >= 2) { result.push(line.trimEnd()); lastWasTitle = false; continue; }
             if (lastWasTitle) { result.push(clean); lastWasTitle = false; continue; }
 
-            if (/^\d/.test(clean) && clean.substring(0, 3).includes('.')) {
-                result.push(clean);
-            } else if (/^[a-z]\./.test(clean) && !/^(i\.|v\.|x\.)/.test(clean)) {
-                result.push("  " + clean);
-            } else if (/^(i\.|ii\.|iii\.|iv\.|v\.|x\.)/.test(clean)) {
-                if (result.length > 0 && result[result.length-1].trim() && /^\d/.test(result[result.length-1].trim())) {
-                    result.push("  " + clean);
-                } else { result.push("    " + clean); }
+            if (/^\d/.test(clean) && clean.substring(0, 3).includes('.')) { result.push(clean); } 
+            else if (/^[a-z]\./.test(clean) && !/^(i\.|v\.|x\.)/.test(clean)) { result.push("  " + clean); } 
+            else if (/^(i\.|ii\.|iii\.|iv\.|v\.|x\.)/.test(clean)) {
+                if (result.length > 0 && result[result.length-1].trim() && /^\d/.test(result[result.length-1].trim())) { result.push("  " + clean); } 
+                else { result.push("    " + clean); }
             } else if (clean.startsWith('-')) {
-                if (result.length > 0 && result[result.length-1].trim() && /^\d/.test(result[result.length-1].trim())) {
-                    result.push("  " + clean);
-                } else { result.push("      " + clean); }
-            } else {
-                result.push("        " + clean);
-            }
+                if (result.length > 0 && result[result.length-1].trim() && /^\d/.test(result[result.length-1].trim())) { result.push("  " + clean); } 
+                else { result.push("      " + clean); }
+            } else { result.push("        " + clean); }
             lastWasTitle = false;
         }
 
@@ -274,10 +394,11 @@
         document.getElementById('output_box').value = outputText;
         updateCount('output_box', 'output_count');
 
-        // 분할 묶음 버튼 생성
+        saveHistory(outputText); 
+
         const container = document.getElementById('chunk_buttons');
         const label = document.getElementById('chunk_label');
-        container.innerHTML = ''; container.appendChild(label); // 초기화
+        container.innerHTML = ''; container.appendChild(label); 
         
         const chunks = splitReports(outputText, 4500);
         if (chunks.length > 1) {
@@ -289,26 +410,22 @@
                 btn.onclick = () => copyToClipboard(chunk, `✅ ${i + 1}번 묶음 복사 완료!`);
                 container.appendChild(btn);
             });
-        } else {
-            label.style.display = 'none';
-        }
+        } else { label.style.display = 'none'; }
         showToast("✅ 변환 완료!");
     }
 
     /* =========================================
-       [5] 스마트 에디터 (일보고 작성 탭)
+       [6] 스마트 에디터 로직
     ========================================= */
     function applyFixedFormat(silent = false) {
-        saveConfig();
         const name = document.getElementById('cfg_name').value.trim();
         const svcs = document.getElementById('cfg_services').value.trim().split(',');
         if (!name || !svcs[0]) return;
-        
         let txt = `■ ${name}\n`;
         svcs.forEach(s => { if(s.trim()) txt += `- ${s.trim()}\n`; });
         txt += "\n[서비스명]\n";
-        
         document.getElementById('smart_input').value = txt;
+        saveConfig(); 
         if(!silent) showToast("✅ 양식 적용 완료!");
     }
 
@@ -320,29 +437,16 @@
         copyToClipboard(txt, `✅ ${txt}`);
     }
 
-    // 스마트 에디터 키보드 제어 (Python KeyRelease-Return, Tab, Backspace 대응)
     const ROMANS = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"];
-    
     function getNextBullet(lines, targetType, indentLen) {
         for (let i = lines.length - 1; i >= 0; i--) {
-            const line = lines[i];
-            const clean = line.trim();
+            const line = lines[i]; const clean = line.trim();
             if (!clean) continue;
             const lineInd = line.length - line.trimStart().length;
-            
             if (lineInd === indentLen) {
-                if (targetType === 'num' && /^\d+\./.test(clean)) {
-                    return (parseInt(clean.match(/^(\d+)/)[1]) + 1) + ". ";
-                }
-                if (targetType === 'alpha' && /^[a-z]\./.test(clean)) {
-                    let nxt = String.fromCharCode(clean.charCodeAt(0) + 1);
-                    return (nxt === 'i' ? 'j' : nxt) + ". ";
-                }
-                if (targetType === 'roman' && /^[ivx]+\./.test(clean)) {
-                    let curr = clean.match(/^([ivx]+)/)[1];
-                    let idx = ROMANS.indexOf(curr);
-                    if (idx !== -1) return (idx < 9 ? ROMANS[idx+1] : 'i') + ". ";
-                }
+                if (targetType === 'num' && /^\d+\./.test(clean)) return (parseInt(clean.match(/^(\d+)/)[1]) + 1) + ". ";
+                if (targetType === 'alpha' && /^[a-z]\./.test(clean)) { let nxt = String.fromCharCode(clean.charCodeAt(0) + 1); return (nxt === 'i' ? 'j' : nxt) + ". "; }
+                if (targetType === 'roman' && /^[ivx]+\./.test(clean)) { let curr = clean.match(/^([ivx]+)/)[1]; let idx = ROMANS.indexOf(curr); if (idx !== -1) return (idx < 9 ? ROMANS[idx+1] : 'i') + ". "; }
             }
             if (lineInd < indentLen && clean) break;
         }
@@ -350,65 +454,48 @@
     }
 
     function insertTextAtCursor(ta, textToInsert, deleteLength = 0) {
-        const start = ta.selectionStart;
-        const val = ta.value;
+        const start = ta.selectionStart; const val = ta.value;
         ta.value = val.substring(0, start - deleteLength) + textToInsert + val.substring(start);
         ta.selectionStart = ta.selectionEnd = start - deleteLength + textToInsert.length;
     }
 
     document.getElementById('smart_input').addEventListener('keydown', function(e) {
-        // ✨ 한글 입력기(IME) 중복 입력 방지 (Python의 KeyRelease 방식과 동일한 효과) ✨
         if (e.isComposing) return;
-
-        const ta = this;
-        const val = ta.value;
-        const cursor = ta.selectionStart;
-        const textBeforeCursor = val.substring(0, cursor);
-        const linesBefore = textBeforeCursor.split('\n');
-        const currentLine = linesBefore[linesBefore.length - 1];
-        const clean = currentLine.trim();
-        const indLen = currentLine.length - currentLine.trimStart().length;
-        const indStr = currentLine.substring(0, indLen);
+        const ta = this; const val = ta.value; const cursor = ta.selectionStart;
+        const textBeforeCursor = val.substring(0, cursor); const linesBefore = textBeforeCursor.split('\n');
+        const currentLine = linesBefore[linesBefore.length - 1]; const clean = currentLine.trim();
+        const indLen = currentLine.length - currentLine.trimStart().length; const indStr = currentLine.substring(0, indLen);
 
         if (e.key === 'Enter') {
-            // 방금 친 줄이 '기호만' 있는 경우 -> 계층 탈출 또는 줄바꿈
             if (/^\s*(\d+\. |[a-z]\. |[ivx]+\. |- )$/.test(currentLine)) {
-                e.preventDefault();
-                let replaceStr = "";
+                e.preventDefault(); let replaceStr = "";
                 if (currentLine.includes("-")) replaceStr = "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4);
                 else if (/^\s*[ivx]+\./.test(currentLine)) replaceStr = "  " + getNextBullet(linesBefore.slice(0,-1), 'alpha', 2);
                 else if (/^\s*[a-z]\./.test(currentLine)) replaceStr = getNextBullet(linesBefore.slice(0,-1), 'num', 0);
-                else if (/^\s*\d+\./.test(currentLine)) replaceStr = ""; 
-                insertTextAtCursor(ta, replaceStr, currentLine.length);
-                return;
+                insertTextAtCursor(ta, replaceStr, currentLine.length); saveConfig(); return;
             }
-
-            // 내용이 있는 경우 -> 다음 번호 생성
-            if (/^[ivx]+\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'roman', indLen)); }
-            else if (/^\d+\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'num', indLen)); }
-            else if (/^[a-z]\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'alpha', indLen)); }
-            else if (clean.startsWith("-")) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + "- "); }
+            if (/^[ivx]+\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'roman', indLen)); saveConfig(); }
+            else if (/^\d+\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'num', indLen)); saveConfig(); }
+            else if (/^[a-z]\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'alpha', indLen)); saveConfig(); }
+            else if (clean.startsWith("-")) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + "- "); saveConfig(); }
         } 
         else if (e.key === 'Tab') {
-            if (/^\s*\d+\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "  " + getNextBullet(linesBefore.slice(0,-1), 'alpha', 2), currentLine.length); }
-            else if (/^\s*[a-z]\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4), currentLine.length); }
-            else if (/^\s*[ivx]+\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "      - ", currentLine.length); }
+            if (/^\s*\d+\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "  " + getNextBullet(linesBefore.slice(0,-1), 'alpha', 2), currentLine.length); saveConfig(); }
+            else if (/^\s*[a-z]\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4), currentLine.length); saveConfig(); }
+            else if (/^\s*[ivx]+\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "      - ", currentLine.length); saveConfig(); }
         }
         else if (e.key === 'Backspace') {
             if (/^\s*(\d+\. |[a-z]\. |[ivx]+\. |- )$/.test(currentLine)) {
-                e.preventDefault();
-                let replaceStr = "";
+                e.preventDefault(); let replaceStr = "";
                 if (currentLine.includes("-")) replaceStr = "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4);
                 else if (/^\s*[ivx]+\./.test(currentLine)) replaceStr = "  " + getNextBullet(linesBefore.slice(0,-1), 'alpha', 2);
                 else if (/^\s*[a-z]\./.test(currentLine)) replaceStr = getNextBullet(linesBefore.slice(0,-1), 'num', 0);
-                insertTextAtCursor(ta, replaceStr, currentLine.length);
+                insertTextAtCursor(ta, replaceStr, currentLine.length); saveConfig();
             }
         }
     });
 
-    // 시작 시 설정 불러오기
     window.onload = loadConfig;
 </script>
-
 </body>
 </html>
