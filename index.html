@@ -9,7 +9,7 @@
         body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .app-container { background: #fff; width: 100%; max-width: 1400px; height: 88vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; flex-direction: row; overflow: hidden; }
         
-        /* [2] 좌측 LNB (히스토리 영역) - 사이즈 살짝 축소 */
+        /* [2] 좌측 LNB (히스토리 영역) */
         .lnb { width: 260px; background: #F8F9FA; border-right: 2px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
         .lnb-header { padding: 15px; font-size: 15px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; display: flex; align-items: center; gap: 8px; }
         .lnb-list { flex: 1; overflow-y: auto; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; }
@@ -28,7 +28,6 @@
 
         .top-nav { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #E0E0E0; }
         .tab-header { display: flex; flex: 1; }
-        /* 탭 높이와 폰트 조정 */
         .tab-btn { flex: 1; max-width: 180px; padding: 12px 0; border: none; background: transparent; font-size: 14px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; }
         .tab-btn:hover { background: #F0F0F0; }
         .tab-btn.active { background: #757575; color: #FFFFFF; border-radius: 8px 8px 0 0; }
@@ -38,12 +37,12 @@
         .tab-content { flex: 1; padding: 20px; display: none; flex-direction: column; overflow: hidden; }
         .tab-content.active { display: flex; }
 
-        /* ✨ 공통 버튼 디자인 다이어트 ✨ */
-        .btn { border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; color: #333; outline: none; padding: 6px 12px; display: flex; justify-content: center; align-items: center; }
+        /* ✨ 공통 버튼 디자인 (다이어트 & 정렬 패치) ✨ */
+        .btn { border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; color: #333; outline: none; padding: 6px 12px; display: flex; justify-content: center; align-items: center; white-space: nowrap; }
         .btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
         .btn:active { transform: translateY(1px); }
         
-        /* Clear, 복사 버튼 크기를 조금 더 줄임 */
+        /* 버튼 크기 축소 */
         .btn-action { width: 75px; text-align: center; padding: 6px 0; } 
         .btn-clear { background: #FFEBEE; color: #E57373; }
         .btn-copy { background: #E0E0E0; }
@@ -64,7 +63,7 @@
         .pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .pane-title { font-size: 14px; font-weight: bold; }
         
-        /* 버튼 나란히 정렬 고정 */
+        /* 상단 버튼 묶음 나란히 정렬 */
         .header-buttons { display: flex; gap: 5px; }
 
         .mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; gap: 8px; }
@@ -77,8 +76,8 @@
         .config-bar input:focus { border-color: #757575; }
         .config-bar input::placeholder { color: #BBB; }
         
-        .action-bar { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .action-left { display: flex; gap: 8px; }
+        .action-bar { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center; }
+        .action-left { display: flex; gap: 8px; flex-wrap: nowrap; }
 
         /* 토스트 및 모달 */
         #toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateY(20px); pointer-events: none; z-index: 1000; }
@@ -98,11 +97,9 @@
 <body>
 
 <div class="app-container">
-    
     <div class="lnb">
         <div class="lnb-header">🕒 변환 히스토리</div>
-        <div class="lnb-list" id="history_list">
-            </div>
+        <div class="lnb-list" id="history_list"></div>
         <div class="lnb-actions">
             <button class="btn btn-primary" style="flex: 1;" onclick="mergeHistory()">선택 취합하기</button>
             <button class="btn btn-clear" style="width: 40px; font-size: 14px;" onclick="deleteHistory()" title="삭제">🗑️</button>
@@ -132,7 +129,6 @@
                         </div>
                     </div>
                     <textarea id="input_box"></textarea>
-                    
                     <div id="input_count" class="char-count">글자 수: 0자</div>
                     <div class="chunk-container" style="visibility: hidden;"></div>
                 </div>
@@ -150,9 +146,7 @@
                         </div>
                     </div>
                     <textarea id="output_box" readonly style="background: #FAFAFA;"></textarea>
-                    
                     <div id="output_count" class="char-count">전체 글자 수: 0자</div>
-                    
                     <div class="chunk-container" id="chunk_buttons">
                         <span class="chunk-label" id="chunk_label">💡 메신저 분할(4500자):</span>
                     </div>
@@ -172,6 +166,7 @@
             <div class="action-bar">
                 <div class="action-left">
                     <button class="btn btn-copy" style="padding: 6px 12px;" onclick="copyProgress()">복사(이름, 100%, MM/DD)</button>
+                    <button class="btn btn-action btn-copy" onclick="copyText('smart_input')">내용 복사</button>
                 </div>
                 <button class="btn btn-action btn-clear" onclick="clearText('smart_input')">Clear</button>
             </div>
@@ -192,14 +187,12 @@
                 <li><b>자동 순번:</b> 기호를 적고 <code>Enter</code>를 치면 이전 기호에 맞춰 다음 번호가 자동 생성됩니다.</li>
                 <li><b>들여쓰기:</b> 기호가 생성된 상태에서 <code>Tab</code>을 누르면 하위 번호로 내려갑니다. (1. -> a.)</li>
                 <li><b>내어쓰기/탈출:</b> 내용 없이 <code>Enter</code>나 <code>Backspace</code>를 누르면 상위 번호로 돌아갑니다.</li>
-                <li><b>자동 저장:</b> 타자를 치는 즉시 브라우저에 임시 저장됩니다.</li>
             </ul>
-            
             <h3 style="color: #03A9F4; margin-bottom: 8px; font-size: 14px;">💡 다중 선택 취합 & 분할 전송</h3>
             <ul style="margin-left: 25px;">
                 <li><b>히스토리:</b> [변환하기]를 누를 때마다 좌측 LNB에 기록이 쌓입니다.</li>
-                <li><b>선택 취합하기:</b> 취합할 팀원들의 기록을 모두 체크하고 [선택 취합하기]를 누르면 한 방에 합쳐줍니다.</li>
-                <li><b>4500자 분할:</b> 글자 수가 메신저 제한을 넘으면 안전하게 4500자 단위로 잘라 분할 복사 버튼을 만들어 줍니다.</li>
+                <li><b>선택 취합하기:</b> 취합할 팀원들을 체크하고 [선택 취합하기]를 누르면 한 방에 합쳐줍니다.</li>
+                <li><b>4500자 분할:</b> 글자 수가 제한을 넘으면 자동으로 분할 버튼을 생성합니다.</li>
             </ul>
         </div>
     </div>
@@ -208,9 +201,6 @@
 <div id="toast">알림 메시지</div>
 
 <script>
-    /* =========================================
-       [1] 공통 유틸리티 & 모달
-    ========================================= */
     function showToast(msg, isError=false) {
         const toast = document.getElementById('toast');
         toast.textContent = msg;
@@ -223,12 +213,12 @@
         document.querySelectorAll('.tab-content').forEach((content, idx) => { content.classList.toggle('active', idx + 1 === tabNum); });
     }
 
-    // ✨ 특수 기호 깨짐 방지를 위한 URL 인코딩 완벽 적용 ✨
+    /* ✨ 위키 URL 인코딩 완벽 패치 ✨ */
     function openWiki() {
         const today = new Date();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
-        
+        // 특수기호 인코딩 처리
         const url = `http://wiki.duzon.com:8080/display/DW/%5BWE1U-QA-Cell%5D+${mm}.${dd}+%3A%3A+2026`;
         window.open(url, '_blank');
     }
@@ -262,9 +252,6 @@
 
     function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
 
-    /* =========================================
-       [2] 설정 & 임시저장
-    ========================================= */
     function saveConfig() {
         const data = {
             name: document.getElementById('cfg_name').value.trim(),
@@ -292,19 +279,14 @@
     document.getElementById('cfg_name').addEventListener('input', saveConfig);
     document.getElementById('cfg_services').addEventListener('input', saveConfig);
 
-    /* =========================================
-       [3] LNB 히스토리 렌더링 & 제어 로직
-    ========================================= */
     function renderHistory() {
         const list = document.getElementById('history_list');
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         list.innerHTML = '';
-        
         if(history.length === 0) {
             list.innerHTML = '<div class="history-empty">아직 기록이 없어요!<br>변환하면 저장됩니다.</div>';
             return;
         }
-
         history.forEach((item, idx) => {
             const div = document.createElement('div');
             div.className = 'history-item';
@@ -314,14 +296,11 @@
                 this.style.borderColor = cb.checked ? '#03A9F4' : '#E0E0E0';
                 this.style.background = cb.checked ? '#F0F8FF' : '#fff';
             };
-            
-            div.innerHTML = `
-                <input type="checkbox" class="history-checkbox" value="${idx}">
+            div.innerHTML = `<input type="checkbox" class="history-checkbox" value="${idx}">
                 <div style="flex:1; overflow:hidden;">
                     <div class="history-time">${item.time}</div>
                     <div class="history-preview">${item.text}</div>
-                </div>
-            `;
+                </div>`;
             list.appendChild(div);
         });
     }
@@ -331,9 +310,7 @@
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         const now = new Date();
         const timeStr = `${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        
         if (history.length > 0 && history[0].text === text) return;
-
         history.unshift({ time: timeStr, text: text });
         if(history.length > 30) history.pop(); 
         localStorage.setItem('dailyReportHistory', JSON.stringify(history));
@@ -343,17 +320,11 @@
     function deleteHistory() {
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         const checkboxes = document.querySelectorAll('.history-checkbox:checked');
-        
         if(checkboxes.length === 0) {
-            if(confirm("선택된 항목이 없습니다. 히스토리를 [전체 삭제] 하시겠습니까?")) {
-                localStorage.removeItem('dailyReportHistory');
-                renderHistory();
-                showToast("✅ 전체 삭제 완료!");
-            }
+            if(confirm("전체 삭제 하시겠습니까?")) { localStorage.removeItem('dailyReportHistory'); renderHistory(); showToast("✅ 삭제 완료!"); }
             return;
         }
-
-        if(confirm(`선택한 ${checkboxes.length}건의 기록을 삭제하시겠습니까?`)) {
+        if(confirm(`선택한 ${checkboxes.length}건을 삭제하시겠습니까?`)) {
             let selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.value)).sort((a,b) => b - a);
             selectedIndices.forEach(idx => history.splice(idx, 1));
             localStorage.setItem('dailyReportHistory', JSON.stringify(history));
@@ -365,24 +336,16 @@
     function mergeHistory() {
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         const checkboxes = document.querySelectorAll('.history-checkbox:checked');
-        
-        if(checkboxes.length === 0) {
-            return showToast("⚠️ 취합할 일보고를 하나 이상 선택해주세요!", true);
-        }
-        
+        if(checkboxes.length === 0) return showToast("⚠️ 취합할 일보고를 선택해주세요!", true);
         let selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.value)).sort((a, b) => b - a);
         let mergedText = selectedIndices.map(idx => history[idx].text).join('\n\n');
-        
         document.getElementById('output_box').value = mergedText;
         updateCount('output_box', 'output_count');
-        
         const container = document.getElementById('chunk_buttons');
-        const label = document.getElementById('chunk_label');
-        container.innerHTML = ''; container.appendChild(label); 
-        
+        container.innerHTML = '<span class="chunk-label" id="chunk_label">💡 메신저 분할(4500자):</span>'; 
         const chunks = splitReports(mergedText, 4500);
         if (chunks.length > 1) {
-            label.style.display = 'inline-block';
+            document.getElementById('chunk_label').style.display = 'inline-block';
             chunks.forEach((chunk, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-chunk';
@@ -390,20 +353,10 @@
                 btn.onclick = () => copyToClipboard(chunk, `✅ ${i + 1}번 묶음 복사 완료!`);
                 container.appendChild(btn);
             });
-        } else { label.style.display = 'none'; }
-        
-        showToast(`✅ ${checkboxes.length}건 취합 완료!`);
-        
-        checkboxes.forEach(cb => {
-            cb.checked = false;
-            cb.closest('.history-item').style.borderColor = '#E0E0E0';
-            cb.closest('.history-item').style.background = '#fff';
-        });
+        }
+        showToast("✅ 취합 완료!");
     }
 
-    /* =========================================
-       [4] 스마트 분할 로직 (4500자 제한)
-    ========================================= */
     function splitReports(text, maxLen = 4500) {
         const lines = text.split('\n');
         const people = []; let currentPerson = [];
@@ -414,7 +367,6 @@
             } else { currentPerson.push(line); }
         }
         if (currentPerson.length > 0) people.push(currentPerson.join('\n'));
-        
         const chunks = []; let currentChunk = "";
         for (let p of people) {
             if (currentChunk.length + p.length + 2 > maxLen) {
@@ -426,14 +378,10 @@
         return chunks;
     }
 
-    /* =========================================
-       [5] 공백 변환기 로직
-    ========================================= */
     function processText() {
         const inputLines = document.getElementById('input_box').value.trimEnd().split('\n');
         const result = [];
         let isFixed = false, lastWasTitle = false;
-
         for (let line of inputLines) {
             const originalIndent = line.length - line.trimStart().length;
             const clean = line.trim();
@@ -443,7 +391,6 @@
             if (isFixed) { result.push(line.trimEnd()); continue; }
             if (originalIndent >= 2) { result.push(line.trimEnd()); lastWasTitle = false; continue; }
             if (lastWasTitle) { result.push(clean); lastWasTitle = false; continue; }
-
             if (/^\d/.test(clean) && clean.substring(0, 3).includes('.')) { result.push(clean); } 
             else if (/^[a-z]\./.test(clean) && !/^(i\.|v\.|x\.)/.test(clean)) { result.push("  " + clean); } 
             else if (/^(i\.|ii\.|iii\.|iv\.|v\.|x\.)/.test(clean)) {
@@ -455,20 +402,15 @@
             } else { result.push("        " + clean); }
             lastWasTitle = false;
         }
-
         const outputText = result.join('\n');
         document.getElementById('output_box').value = outputText;
         updateCount('output_box', 'output_count');
-
         saveHistory(outputText); 
-
         const container = document.getElementById('chunk_buttons');
-        const label = document.getElementById('chunk_label');
-        container.innerHTML = ''; container.appendChild(label); 
-        
+        container.innerHTML = '<span class="chunk-label" id="chunk_label">💡 메신저 분할(4500자):</span>'; 
         const chunks = splitReports(outputText, 4500);
         if (chunks.length > 1) {
-            label.style.display = 'inline-block';
+            document.getElementById('chunk_label').style.display = 'inline-block';
             chunks.forEach((chunk, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-chunk';
@@ -476,21 +418,16 @@
                 btn.onclick = () => copyToClipboard(chunk, `✅ ${i + 1}번 묶음 복사 완료!`);
                 container.appendChild(btn);
             });
-        } else { label.style.display = 'none'; }
+        }
         showToast("✅ 변환 완료!");
     }
 
-    /* =========================================
-       [6] 스마트 에디터 로직
-    ========================================= */
     function applyFixedFormat(silent = false) {
         const name = document.getElementById('cfg_name').value.trim();
         const svcs = document.getElementById('cfg_services').value.trim().split(',');
         if (!name || !svcs[0]) return;
-        
         let txt = `■ ${name}\n[업무]\n`;
         svcs.forEach(s => { if(s.trim()) txt += `- ${s.trim()}\n`; });
-        
         document.getElementById('smart_input').value = txt;
         saveConfig(); 
         if(!silent) showToast("✅ 양식 적용 완료!");
@@ -501,7 +438,7 @@
         if(!name) return showToast("⚠️ 이름을 먼저 입력해주세요!", true);
         const today = new Date();
         const txt = `(${name}, 100%, ${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')})`;
-        copyToClipboard(txt, `✅ ${txt}`);
+        copyToClipboard(txt, `✅ 복사 완료!`);
     }
 
     const ROMANS = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"];
@@ -532,7 +469,6 @@
         const textBeforeCursor = val.substring(0, cursor); const linesBefore = textBeforeCursor.split('\n');
         const currentLine = linesBefore[linesBefore.length - 1]; const clean = currentLine.trim();
         const indLen = currentLine.length - currentLine.trimStart().length; const indStr = currentLine.substring(0, indLen);
-
         if (e.key === 'Enter') {
             if (/^\s*(\d+\. |[a-z]\. |[ivx]+\. |- )$/.test(currentLine)) {
                 e.preventDefault(); let replaceStr = "";
@@ -545,13 +481,11 @@
             else if (/^\d+\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'num', indLen)); saveConfig(); }
             else if (/^[a-z]\./.test(clean)) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + getNextBullet(linesBefore, 'alpha', indLen)); saveConfig(); }
             else if (clean.startsWith("-")) { e.preventDefault(); insertTextAtCursor(ta, "\n" + indStr + "- "); saveConfig(); }
-        } 
-        else if (e.key === 'Tab') {
+        } else if (e.key === 'Tab') {
             if (/^\s*\d+\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "  " + getNextBullet(linesBefore.slice(0,-1), 'alpha', 2), currentLine.length); saveConfig(); }
             else if (/^\s*[a-z]\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4), currentLine.length); saveConfig(); }
             else if (/^\s*[ivx]+\.\s$/.test(currentLine)) { e.preventDefault(); insertTextAtCursor(ta, "      - ", currentLine.length); saveConfig(); }
-        }
-        else if (e.key === 'Backspace') {
+        } else if (e.key === 'Backspace') {
             if (/^\s*(\d+\. |[a-z]\. |[ivx]+\. |- )$/.test(currentLine)) {
                 e.preventDefault(); let replaceStr = "";
                 if (currentLine.includes("-")) replaceStr = "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4);
@@ -562,10 +496,7 @@
         }
     });
 
-    window.onload = () => {
-        loadConfig();
-        renderHistory();
-    };
+    window.onload = () => { loadConfig(); renderHistory(); };
 </script>
 </body>
 </html>
