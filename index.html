@@ -12,8 +12,6 @@
         /* [2] 좌측 LNB (히스토리 영역) */
         .lnb { width: 260px; background: #F8F9FA; border-right: 2px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
         .lnb-header { padding: 15px; font-size: 15px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; }
-        
-        /* ✨ 전체 선택 체크박스 영역 ✨ */
         .select-all-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #666; font-weight: bold; }
         .select-all-bar input[type="checkbox"] { transform: scale(1.1); cursor: pointer; accent-color: #03A9F4; }
 
@@ -83,8 +81,18 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.2s; }
         .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content { background: #fff; width: 90%; max-width: 550px; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 80vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 12px; margin-bottom: 12px; }
+        .modal-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
+        .modal-overlay.show .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 15px; margin-bottom: 15px; }
+        .modal-title { font-size: 18px; font-weight: bold; color: #333; }
+        
+        /* ✨ 도움말 내부 스타일 ✨ */
+        .help-section { margin-bottom: 20px; }
+        .help-section h3 { font-size: 15px; color: #03A9F4; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+        .help-section ul { list-style: none; padding-left: 5px; }
+        .help-section li { font-size: 13px; color: #555; line-height: 1.8; margin-bottom: 4px; }
+        .help-section li::before { content: "•"; color: #03A9F4; font-weight: bold; display: inline-block; width: 15px; }
+        .help-accent { font-weight: bold; color: #333; }
     </style>
 </head>
 <body>
@@ -110,7 +118,7 @@
                 <button class="tab-btn" onclick="switchTab(2)">일보고 작성</button>
             </div>
             <div class="nav-actions">
-                <button class="btn btn-copy" style="width: 24px; height: 24px; border-radius: 50%; padding:0;" onclick="openHelp()">?</button>
+                <button class="btn btn-copy" style="width: 24px; height: 24px; border-radius: 50%; padding:0; color: #888;" onclick="openHelp()">?</button>
                 <button class="btn btn-primary" onclick="openWiki()">🔗일보고 바로가기</button>
             </div>
         </div>
@@ -171,15 +179,43 @@
 </div>
 
 <div id="help_modal" class="modal-overlay" onclick="if(event.target===this) closeHelp()">
-    <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title">❓ 일보고 작성기 도움말</div>
-            <button class="btn btn-clear" onclick="closeHelp()">×</button>
+            <div class="modal-title">📖 사용법 및 주의사항</div>
+            <button class="btn btn-clear" style="width: 30px; font-size: 20px;" onclick="closeHelp()">×</button>
         </div>
-        <div style="font-size: 13px; line-height: 1.7;">
-            <p><b>• 스마트 에디터:</b> Enter/Tab/Backspace로 자동 순번과 들여쓰기를 조절하세요.</p>
-            <p><b>• 취합하기:</b> 좌측 히스토리에서 여러 항목을 선택해 하나로 합칠 수 있습니다.</p>
-            <p><b>• 분할 확인:</b> 글자가 길어지면 생성되는 묶음을 클릭해 내용을 확인하고 복사하세요.</p>
+        <div style="overflow-y: auto; padding-right: 5px;">
+            <div class="help-section">
+                <h3>1. 변환기능 이용</h3>
+                <ul>
+                    <li><span class="help-accent">공백 변환 규칙:</span> 작성창에 내용을 넣고 변환 시, 위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li>
+                </ul>
+            </div>
+            
+            <div class="help-section">
+                <h3>2. 취합기능 이용</h3>
+                <ul>
+                    <li><span class="help-accent">히스토리 저장:</span> 변환기에 적고 [변환하기]를 누른 내용은 좌측 리스트에 자동 저장됩니다.</li>
+                    <li><span class="help-accent">일괄 취합:</span> 히스토리에서 취합할 항목들을 선택 후 [선택 취합하기]를 누르면 한 번에 합쳐집니다.</li>
+                    <li><span class="help-accent">자동 분할:</span> 취합된 내용이 4500자를 초과하면 메신저 전송용으로 자동 분할됩니다.</li>
+                    <li><span class="help-accent">미리보기 및 복사:</span> 생성된 묶음을 클릭해 내용을 확인하고 바로 복사할 수 있습니다.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>3. 일보고 작성탭 이용</h3>
+                <ul>
+                    <li><span class="help-accent">양식 저장:</span> 이름과 서비스명을 적고 [적용/저장] 시 브라우저에 저장되어 재접속 시에도 유지됩니다.</li>
+                    <li><span class="help-accent">진행률 복사:</span> [복사(이름, 100%, MM/DD)] 버튼으로 내 이름과 오늘 날짜가 포함된 텍스트를 즉시 가져옵니다.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>4. 일보고 바로가기</h3>
+                <ul>
+                    <li><span class="help-accent">원클릭 이동:</span> 상단 우측 버튼 클릭 시 오늘 날짜의 전사 일일보고 위키 페이지로 즉시 이동합니다.</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -229,7 +265,6 @@
 
     function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
 
-    /* ✨ 전체 선택 체크박스 로직 ✨ */
     function toggleSelectAll(masterCb) {
         const cbs = document.querySelectorAll('.history-checkbox');
         cbs.forEach(cb => {
@@ -243,8 +278,6 @@
         const list = document.getElementById('history_list');
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         list.innerHTML = history.length ? '' : '<div class="history-empty">기록이 없습니다.</div>';
-        
-        // 렌더링 시 마스터 체크박스 초기화
         document.getElementById('master_checkbox').checked = false;
 
         history.forEach((item, idx) => {
@@ -254,11 +287,9 @@
                 const cb = this.querySelector('.history-checkbox');
                 if(e.target !== cb) cb.checked = !cb.checked;
                 this.classList.toggle('selected', cb.checked);
-                
-                // 개별 선택에 따른 마스터 체크박스 상태 업데이트
                 const allCbs = document.querySelectorAll('.history-checkbox');
                 const checkedCbs = document.querySelectorAll('.history-checkbox:checked');
-                document.getElementById('master_checkbox').checked = (allCbs.length === checkedCbs.length);
+                document.getElementById('master_checkbox').checked = (allCbs.length > 0 && allCbs.length === checkedCbs.length);
             };
             div.innerHTML = `<input type="checkbox" class="history-checkbox" value="${idx}">
                 <div style="flex:1; overflow:hidden;">
@@ -284,7 +315,10 @@
     function deleteHistory() {
         let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
         const cbs = document.querySelectorAll('.history-checkbox:checked');
-        if(!cbs.length) return confirm("전체 삭제하시겠습니까?") && (localStorage.removeItem('dailyReportHistory'), renderHistory());
+        if(!cbs.length) {
+            if(confirm("전체 삭제하시겠습니까?")) { localStorage.removeItem('dailyReportHistory'); renderHistory(); showToast("✅ 삭제 완료!"); }
+            return;
+        }
         if(confirm(`${cbs.length}건을 삭제하시겠습니까?`)) {
             let ids = Array.from(cbs).map(cb => parseInt(cb.value)).sort((a,b)=>b-a);
             ids.forEach(id => history.splice(id, 1));
