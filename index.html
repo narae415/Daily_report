@@ -29,6 +29,7 @@
             <div class="tab-header">
                 <button class="tab-btn active" onclick="switchTab(1)">공백 변환기</button>
                 <button class="tab-btn" onclick="switchTab(2)">일보고 작성</button>
+                <button class="tab-btn" onclick="switchTab(3)">지라 집계</button>
             </div>
             <div class="nav-actions">
                 <button class="btn btn-jira" onclick="openJiraConfig()">⚙️ 지라 설정</button>
@@ -43,12 +44,11 @@
                     <div class="pane-header">
                         <span class="pane-title">✏️작성창</span>
                         <div class="header-buttons">
-                            <button class="btn btn-jira" style="width: 90px; padding: 6px 0;" onclick="fetchJiraIssues()">📥 지라 집계</button>
                             <button class="btn btn-action btn-clear" onclick="clearText('input_box')">Clear</button>
                             <button class="btn btn-action btn-copy" onclick="copyText('input_box')">복사</button>
                         </div>
                     </div>
-                    <textarea id="input_box" placeholder="여기에 내용을 적거나, [지라 집계] 버튼을 눌러주세요!"></textarea>
+                    <textarea id="input_box" placeholder="여기에 변환할 내용을 적어주세요!"></textarea>
                     <div id="input_count" class="char-count">글자 수: 0자</div>
                 </div>
 
@@ -90,6 +90,19 @@
             </div>
             <textarea id="smart_input"></textarea>
         </div>
+
+        <div id="tab3" class="tab-content">
+            <div class="pane-header" style="margin-bottom: 8px;">
+                <span class="pane-title" style="font-size: 14px; color: #0288D1;">📥 내 지라 업무 집계</span>
+                <div class="header-buttons">
+                    <button class="btn btn-jira" style="width: 100px; padding: 6px 0;" onclick="fetchJiraIssues()">📥 집계 실행</button>
+                    <button class="btn btn-action btn-clear" onclick="clearText('jira_output_box')">Clear</button>
+                    <button class="btn btn-action btn-copy" onclick="copyText('jira_output_box')">복사</button>
+                </div>
+            </div>
+            <textarea id="jira_output_box" placeholder="우측 상단 [⚙️ 지라 설정] 등록 후, 위쪽의 [📥 집계 실행] 버튼을 눌러주세요!"></textarea>
+            <div id="jira_output_count" class="char-count">글자 수: 0자</div>
+        </div>
     </div>
 </div>
 
@@ -124,8 +137,8 @@
             <div class="help-section">
                 <h3>2. 지라(Jira) 연동 가이드</h3>
                 <ul>
-                    <li>브라우저 확장프로그램 <b>[Allow CORS]</b>를 꼭 켜주세요.</li>
-                    <li>[지라 설정]에서 ID/PW를 등록해야 정상 작동합니다.</li>
+                    <li>브라우저 확장프로그램 <b>[Allow CORS]</b>를 켜고 [지라 설정]에서 계정을 등록해주세요.</li>
+                    <li><b>[지라 집계]</b> 탭에서 버튼을 누르면 이번 주 업무가 자동 파싱됩니다.</li>
                 </ul>
             </div>
         </div>

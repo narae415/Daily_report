@@ -1,4 +1,3 @@
-/* --- 기본 공통 함수 --- */
 function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
@@ -7,6 +6,7 @@ function showToast(msg, type = 'success') {
 }
 function hideToast() { document.getElementById('toast').className = ''; }
 
+/* ✨ 3개의 탭 전환을 완벽하게 지원하는 로직 ✨ */
 function switchTab(tabNum) {
     document.querySelectorAll('.tab-btn').forEach((btn, idx) => btn.classList.toggle('active', idx + 1 === tabNum));
     document.querySelectorAll('.tab-content').forEach((content, idx) => content.classList.toggle('active', idx + 1 === tabNum));
@@ -22,15 +22,17 @@ function openHelp() { document.getElementById('help_modal').classList.add('show'
 function closeHelp() { document.getElementById('help_modal').classList.remove('show'); }
 
 function updateCount(inputId, labelId) {
-    const text = document.getElementById(inputId).value;
-    const count = text.replace(/\n+$/, '').length; 
-    document.getElementById(labelId).textContent = (inputId === 'output_box' ? '전체 글자 수: ' : '글자 수: ') + count + '자';
+    const el = document.getElementById(inputId);
+    if(el) {
+        const count = el.value.replace(/\n+$/, '').length; 
+        document.getElementById(labelId).textContent = (inputId === 'output_box' ? '전체 글자 수: ' : '글자 수: ') + count + '자';
+    }
 }
 
 function clearText(targetId) {
     if(confirm("내용을 모두 지우시겠습니까?")) {
         document.getElementById(targetId).value = "";
-        if(targetId === 'input_box') updateCount('input_box', 'input_count');
+        updateCount(targetId, targetId === 'jira_output_box' ? 'jira_output_count' : (targetId === 'input_box' ? 'input_count' : ''));
         saveConfig(); 
     }
 }
@@ -41,7 +43,7 @@ function copyToClipboard(text, successMsg) {
 }
 function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
 
-/* --- ✨ 심플해진 지라 설정 로직 ✨ --- */
+/* --- 지라 설정 모달 --- */
 function openJiraConfig() { 
     document.getElementById('j_auth_id').value = localStorage.getItem('jira_auth_id') || '';
     document.getElementById('j_auth_token').value = localStorage.getItem('jira_auth_token') || '';
@@ -62,21 +64,19 @@ function getJiraAuthHeader() {
     return 'Basic ' + btoa(unescape(encodeURIComponent(authId + ':' + token)));
 }
 
-/* --- ✨ 지라 집계 불러오기 (나래핑 JQL 완전 이식) ✨ --- */
+/* --- ✨ 지라 집계 파싱 로직 (3번 탭 전용 출력) ✨ --- */
 async function fetchJiraIssues() {
     const authId = localStorage.getItem('jira_auth_id');
     const token = localStorage.getItem('jira_auth_token');
 
     if(!authId || !token) return showToast("⚠️ 우측 상단 [지라 설정]을 먼저 해주세요!", 'error');
 
-    // URL 고정 및 ID 자동 추출
     const url = "http://jira.duzon.com:8080";
-    const myId = authId.split('@')[0].toLowerCase(); // 이메일로 입력해도 앞부분만 빼서 ID로 씀!
+    const myId = authId.split('@')[0].toLowerCase(); 
 
     showToast("⏳ 지라 데이터 집계 중...", 'loading');
 
     try {
-        // 나래핑이 준 JQL 쿼리 그대로 적용!
         const jql = encodeURIComponent(`(assignee = "${myId}" OR reporter = "${myId}" OR creator = "${myId}") AND updated >= startOfWeek()`);
         const apiUrl = `${url}/rest/api/2/search?jql=${jql}&maxResults=50`;
 
@@ -90,7 +90,6 @@ async function fetchJiraIssues() {
         const data = await response.json();
         const issues = data.issues || [];
 
-        // 한국 시간대(KST) 보정하여 오늘 날짜 구하기
         const now = new Date();
         const todayStr = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
 
@@ -146,8 +145,9 @@ async function fetchJiraIssues() {
         resultText += "📅 [이번 주 주간보고용]\n";
         resultText += weeklyList.length > 0 ? weeklyList.join("\n\n") : "- 이번 주 활동 내역 없음\n";
 
-        document.getElementById('input_box').value = resultText;
-        updateCount('input_box', 'input_count');
+        // ✨ 3번 탭의 전용 텍스트박스에 꽂아주기 ✨
+        document.getElementById('jira_output_box').value = resultText;
+        updateCount('jira_output_box', 'jira_output_count');
         hideToast();
         showToast("✅ 지라 집계 완료!");
 
@@ -158,7 +158,7 @@ async function fetchJiraIssues() {
     }
 }
 
-/* --- 나머지 기존 로직들 --- */
+/* --- 공백 변환 및 히스토리 공통 로직 --- */
 function toggleSelectAll(masterCb) {
     const cbs = document.querySelectorAll('.history-checkbox');
     cbs.forEach(cb => { cb.checked = masterCb.checked; cb.closest('.history-item').classList.toggle('selected', masterCb.checked); });
@@ -317,10 +317,18 @@ function processText() {
     showToast("✅ 변환 완료!");
 }
 
+/* ✨ 데이터 저장 로직에 3번 탭(지라 창) 데이터도 포함! ✨ */
 function saveConfig() {
-    const data = { name: document.getElementById('cfg_name').value.trim(), services: document.getElementById('cfg_services').value.trim(), inputBoxText: document.getElementById('input_box').value, smartInputText: document.getElementById('smart_input').value };
+    const data = { 
+        name: document.getElementById('cfg_name').value.trim(), 
+        services: document.getElementById('cfg_services').value.trim(), 
+        inputBoxText: document.getElementById('input_box').value, 
+        smartInputText: document.getElementById('smart_input').value,
+        jiraBoxText: document.getElementById('jira_output_box') ? document.getElementById('jira_output_box').value : ""
+    };
     localStorage.setItem('dailyReportConfig', JSON.stringify(data));
 }
+
 function loadConfig() {
     const data = JSON.parse(localStorage.getItem('dailyReportConfig'));
     if (data) {
@@ -328,10 +336,17 @@ function loadConfig() {
         document.getElementById('cfg_services').value = data.services || "";
         document.getElementById('input_box').value = data.inputBoxText || "";
         document.getElementById('smart_input').value = data.smartInputText || "";
+        
+        if(document.getElementById('jira_output_box')) {
+            document.getElementById('jira_output_box').value = data.jiraBoxText || "";
+            updateCount('jira_output_box', 'jira_output_count');
+        }
+        
         updateCount('input_box', 'input_count');
         if (!data.smartInputText || data.smartInputText.trim() === "") applyFixedFormat(true);
     }
 }
+
 function applyFixedFormat(silent = false) {
     const name = document.getElementById('cfg_name').value.trim(), svcs = document.getElementById('cfg_services').value.trim().split(',');
     if (!name || !svcs[0]) return;
@@ -339,6 +354,7 @@ function applyFixedFormat(silent = false) {
     document.getElementById('smart_input').value = txt;
     saveConfig(); if(!silent) showToast("✅ 양식 적용 완료!");
 }
+
 function copyProgress() {
     const name = document.getElementById('cfg_name').value.trim(); 
     if(!name) return showToast("⚠️ 이름을 먼저 입력해주세요!", 'error');
@@ -370,6 +386,8 @@ function insertAtCursor(ta, txt, del=0) {
     ta.value = val.substring(0, start-del) + txt + val.substring(start);
     ta.selectionStart = ta.selectionEnd = start - del + txt.length;
 }
+
+// 에디터 자동 텍스트 입력 로직
 document.getElementById('smart_input').addEventListener('keydown', function(e) {
     if (e.isComposing) return;
     const ta = this, val = ta.value, cursor = ta.selectionStart, linesBefore = val.substring(0, cursor).split('\n'), curr = linesBefore[linesBefore.length-1], clean = curr.trim(), ind = curr.length - curr.trimStart().length, indStr = curr.substring(0, ind);
@@ -398,4 +416,13 @@ document.getElementById('smart_input').addEventListener('keydown', function(e) {
     }
 });
 
-window.onload = () => { loadConfig(); renderHistory(); };
+/* ✨ 이벤트 리스너 통합 등록 ✨ */
+window.onload = () => { 
+    loadConfig(); 
+    renderHistory(); 
+    document.getElementById('input_box').addEventListener('input', () => { updateCount('input_box', 'input_count'); saveConfig(); });
+    document.getElementById('smart_input').addEventListener('input', saveConfig);
+    document.getElementById('jira_output_box').addEventListener('input', () => { updateCount('jira_output_box', 'jira_output_count'); saveConfig(); });
+    document.getElementById('cfg_name').addEventListener('input', saveConfig);
+    document.getElementById('cfg_services').addEventListener('input', saveConfig);
+};
