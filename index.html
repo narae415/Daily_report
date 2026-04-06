@@ -11,7 +11,7 @@
 <div class="app-container">
     <div class="lnb">
         <div class="lnb-header">
-            <span>🕒 히스토리</span>
+            <span>히스토리</span>
             <div style="display:flex; align-items:center; gap:5px;">
                 <input type="checkbox" id="master_checkbox" onclick="toggleSelectAll(this)">
                 <label for="master_checkbox" style="font-size:10px; cursor:pointer;">전체</label>
@@ -20,7 +20,7 @@
         <div class="lnb-list" id="history_list"></div>
         <div class="lnb-actions">
             <button class="btn btn-primary" style="flex: 1;" onclick="mergeHistory()">선택 취합하기</button>
-            <button class="btn btn-clear" style="width: 35px; font-size: 14px;" onclick="deleteHistory()">🗑️</button>
+            <button class="btn btn-clear" style="width: 35px;" onclick="deleteHistory()">삭제</button>
         </div>
     </div>
 
@@ -32,9 +32,8 @@
                 <button class="tab-btn" onclick="switchTab(3)">지라 집계</button>
             </div>
             <div class="nav-actions">
-                <button class="btn btn-jira" onclick="openJiraConfig()">⚙️ 지라 설정</button>
-                <button class="btn btn-primary" onclick="openWiki()">🔗일보고 바로가기</button>
-                <button class="btn btn-copy" style="width: 22px; height: 22px; border-radius: 50%; padding:0; color: #888;" onclick="openHelp()">?</button>
+                <button class="btn btn-primary" onclick="openWiki()">일보고 바로가기</button>
+                <button class="btn btn-copy" style="width: 22px; height: 22px; border-radius: 50%; padding:0;" onclick="openHelp()">?</button>
             </div>
         </div>
 
@@ -42,23 +41,21 @@
             <div class="converter-layout">
                 <div class="pane">
                     <div class="pane-header">
-                        <span class="pane-title">✏️작성창</span>
+                        <span class="pane-title">작성창</span>
                         <div class="header-buttons">
                             <button class="btn btn-action btn-clear" onclick="clearText('input_box')">Clear</button>
                             <button class="btn btn-action btn-copy" onclick="copyText('input_box')">복사</button>
                         </div>
                     </div>
-                    <textarea id="input_box" placeholder="여기에 변환할 내용을 적어주세요!"></textarea>
+                    <textarea id="input_box" placeholder="내용을 입력하세요."></textarea>
                     <div id="input_count" class="char-count">글자 수: 0자</div>
                 </div>
-
                 <div class="mid-buttons">
                     <button class="btn btn-primary" style="width: 80px; height: 35px;" onclick="processText()">변환</button>
                 </div>
-
                 <div class="pane">
                     <div class="pane-header">
-                        <span class="pane-title">📃변환결과</span>
+                        <span class="pane-title">변환결과</span>
                         <div class="header-buttons">
                             <button class="btn btn-action btn-clear" onclick="clearText('output_box')">Clear</button>
                             <button class="btn btn-action btn-copy" onclick="copyText('output_box')">복사</button>
@@ -66,8 +63,7 @@
                     </div>
                     <textarea id="output_box" readonly style="background: #FAFAFA;"></textarea>
                     <div id="output_count" class="char-count">전체 글자 수: 0자</div>
-                    
-                    <span class="chunk-label" id="chunk_label">💡 메신저 분할 확인(4500자):</span>
+                    <span class="chunk-label" id="chunk_label">메신저 분할 확인(4500자):</span>
                     <div class="chunk-container" id="chunk_buttons"></div>
                 </div>
             </div>
@@ -83,7 +79,7 @@
             </div>
             <div class="action-bar">
                 <div class="action-left">
-                    <button class="btn btn-copy" style="padding: 6px 12px;" onclick="copyProgress()">복사(이름, 100%, MM/DD)</button>
+                    <button class="btn btn-copy" onclick="copyProgress()">복사(이름, 100%, 날짜)</button>
                     <button class="btn btn-action btn-copy" onclick="copyText('smart_input')">복사</button>
                 </div>
                 <button class="btn btn-action btn-clear" onclick="clearText('smart_input')">Clear</button>
@@ -92,33 +88,18 @@
         </div>
 
         <div id="tab3" class="tab-content">
-            <div class="pane-header" style="margin-bottom: 8px;">
-                <span class="pane-title" style="font-size: 14px; color: #0288D1;">📥 내 지라 업무 집계</span>
+            <div class="pane-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="pane-title">지라 데이터 붙여넣기</span>
+                    <button class="btn btn-copy" style="width: 20px; height: 20px; border-radius: 50%; padding:0; font-size:11px;" onclick="openJiraHelp()">?</button>
+                </div>
                 <div class="header-buttons">
-                    <button class="btn btn-jira" style="width: 100px; padding: 6px 0;" onclick="fetchJiraIssues()">📥 집계 실행</button>
-                    <button class="btn btn-action btn-clear" onclick="clearText('jira_output_box')">Clear</button>
-                    <button class="btn btn-action btn-copy" onclick="copyText('jira_output_box')">복사</button>
+                    <button class="btn btn-jira" style="padding: 6px 12px;" onclick="saveJiraToHistory()">히스토리에 저장</button>
+                    <button class="btn btn-action btn-clear" onclick="clearText('jira_input_box')">Clear</button>
                 </div>
             </div>
-            <textarea id="jira_output_box" placeholder="우측 상단 [⚙️ 지라 설정] 등록 후, 위쪽의 [📥 집계 실행] 버튼을 눌러주세요!"></textarea>
-            <div id="jira_output_count" class="char-count">글자 수: 0자</div>
-        </div>
-    </div>
-</div>
-
-<div id="jira_config_modal" class="modal-overlay" onclick="if(event.target===this) closeJiraConfig()">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="modal-title">⚙️ Jira 연동 설정 (개인 PC 저장)</div>
-            <button class="btn btn-clear" style="width: 30px; font-size: 20px;" onclick="closeJiraConfig()">×</button>
-        </div>
-        <div class="jira-form">
-            <div class="hint">⚠️ 브라우저에 CORS 우회 확장프로그램(Allow CORS 등)이 켜져 있어야 작동합니다.</div>
-            <label>지라 ID (사번 또는 아이디)</label>
-            <input type="text" id="j_auth_id" placeholder="예: narae15">
-            <label>비밀번호 (또는 API Token)</label>
-            <input type="password" id="j_auth_token" placeholder="비밀번호 입력">
-            <button class="btn btn-primary" style="margin-top: 10px; padding: 10px;" onclick="saveJiraConfig()">설정 저장하기</button>
+            <textarea id="jira_input_box" placeholder="지라 사이트에서 복사한 내용을 여기에 붙여넣으세요."></textarea>
+            <div id="jira_input_count" class="char-count">글자 수: 0자</div>
         </div>
     </div>
 </div>
@@ -126,21 +107,30 @@
 <div id="help_modal" class="modal-overlay" onclick="if(event.target===this) closeHelp()">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title">📖 사용법 및 주의사항</div>
+            <div class="modal-title">사용법 및 주의사항</div>
             <button class="btn btn-clear" style="width: 30px; font-size: 20px;" onclick="closeHelp()">×</button>
         </div>
-        <div style="overflow-y: auto;">
-            <div class="help-section">
-                <h3>1. 변환기능 이용</h3>
-                <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li></ul>
-            </div>
-            <div class="help-section">
-                <h3>2. 지라(Jira) 연동 가이드</h3>
-                <ul>
-                    <li>브라우저 확장프로그램 <b>[Allow CORS]</b>를 켜고 [지라 설정]에서 계정을 등록해주세요.</li>
-                    <li><b>[지라 집계]</b> 탭에서 버튼을 누르면 이번 주 업무가 자동 파싱됩니다.</li>
-                </ul>
-            </div>
+        <div class="help-section">
+            <h3>1. 변환기능</h3>
+            <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li></ul>
+            <h3>2. 취합기능</h3>
+            <ul><li>좌측 히스토리에서 항목을 선택하여 한 번에 합칠 수 있습니다.</li></ul>
+        </div>
+    </div>
+</div>
+
+<div id="jira_help_modal" class="modal-overlay" onclick="if(event.target===this) closeJiraHelp()">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <div class="modal-title">지라 추출 버튼 설정 방법</div>
+            <button class="btn btn-clear" style="width: 30px; font-size: 20px;" onclick="closeJiraHelp()">×</button>
+        </div>
+        <div class="help-section" style="font-size: 13px;">
+            <p>1. 크롬 북마크 바에서 마우스 우클릭 -> [페이지 추가]를 누릅니다.</p>
+            <p>2. 이름을 <b>지라 추출</b>로 정하고, URL 칸에 아래 코드를 모두 복사해서 넣습니다.</p>
+            <textarea readonly style="height: 100px; margin: 10px 0; font-size: 11px; background: #f9f9f9;" onclick="this.select()">javascript:(async function(){try{const e=await fetch("/rest/api/2/myself");if(!e.ok)throw new Error("로그인 필요");const t=await e.json(),n=t.name.toLowerCase(),a=encodeURIComponent(`(assignee = "${n}" OR reporter = "${n}" OR creator = "${n}") AND updated >= startOfWeek()`),o=await fetch(`/rest/api/2/search?jql=${a}&maxResults=50`);if(!o.ok)throw new Error("실패");const r=await o.json(),s=r.issues||[],i=new Date,c=new Date(i.getTime()-6e4*i.getTimezoneOffset()).toISOString().split("T")[0];let l=[],u=[],d=[];s.forEach(e=>{const t=e.fields,a=e.key,o=t.summary,r=t.status?t.status.name:"상태없음",s=r.toUpperCase(),i=JSON.stringify(t.assignee||"").toLowerCase(),p=JSON.stringify(t.reporter||"").toLowerCase(),g=JSON.stringify(t.creator||"").toLowerCase();if(i.includes(n)||p.includes(n)||g.includes(n)){const n=t.created.split("T")[0],s=t.updated.split("T")[0],i=new Date(t.created).toLocaleString("ko-KR").slice(0,-3),p=new Date(t.updated).toLocaleString("ko-KR").slice(0,-3),g=`[${a}] ${o}\n   └ 상태: ${r} | 접수: ${i} | 수정: ${p}`;u.some(e=>e.includes(a))||u.push(g),(n===c||s===c)&&(l.some(e=>e.includes(a))||l.push(g));const h=["TO DO","접수","OPEN","할 일"].includes(r.toUpperCase()),f=["검수요청","QA검토"].includes(r);(h||f)&&d.push(`${f?"[검수필요]":"[미확인]"} ${a} - ${o} (${r})`)}});let p="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";p+=`[오늘 일보고용] - ${c}\n`,p+="━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n",p+=l.length>0?l.join("\n\n")+"\n\n":"- 오늘 활동 내역 없음\n\n",p+="[체크 필요 (미확인 / 검수요청)]\n",p+=d.length>0?[...new Set(d)].join("\n")+"\n\n":"- 확인 필요한 지라 없음\n\n",p+="[이번 주 주간보고용]\n",p+=u.length>0?u.join("\n\n"):"- 이번 주 활동 내역 없음\n";const g=document.createElement("textarea");g.value=p,document.body.appendChild(g),g.select(),document.execCommand("copy"),document.body.removeChild(g),alert("복사되었습니다. 일보고 메이커에 붙여넣으세요.")}catch(e){alert(e.message)}})();</textarea>
+            <p>3. 지라 사이트에 접속한 상태에서 이 북마크를 클릭합니다.</p>
+            <p>4. 복사 완료 알림이 뜨면 이 사이트의 [지라 집계] 탭에 붙여넣으세요.</p>
         </div>
     </div>
 </div>
