@@ -41,21 +41,17 @@ function copyToClipboard(text, successMsg) {
 }
 function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
 
-/* --- ✨ 지라 설정 (공통) ✨ --- */
+/* --- ✨ 심플해진 지라 설정 로직 ✨ --- */
 function openJiraConfig() { 
-    document.getElementById('j_url').value = localStorage.getItem('jira_url') || '';
     document.getElementById('j_auth_id').value = localStorage.getItem('jira_auth_id') || '';
     document.getElementById('j_auth_token').value = localStorage.getItem('jira_auth_token') || '';
-    document.getElementById('j_myid').value = localStorage.getItem('jira_myid') || '';
     document.getElementById('jira_config_modal').classList.add('show'); 
 }
 function closeJiraConfig() { document.getElementById('jira_config_modal').classList.remove('show'); }
 
 function saveJiraConfig() {
-    localStorage.setItem('jira_url', document.getElementById('j_url').value.trim());
     localStorage.setItem('jira_auth_id', document.getElementById('j_auth_id').value.trim());
     localStorage.setItem('jira_auth_token', document.getElementById('j_auth_token').value.trim());
-    localStorage.setItem('jira_myid', document.getElementById('j_myid').value.trim().toLowerCase());
     showToast("✅ 지라 설정 저장 완료!");
     closeJiraConfig();
 }
@@ -66,18 +62,23 @@ function getJiraAuthHeader() {
     return 'Basic ' + btoa(unescape(encodeURIComponent(authId + ':' + token)));
 }
 
-/* --- ✨ 지라 집계 불러오기 (GET) ✨ --- */
+/* --- ✨ 지라 집계 불러오기 (나래핑 JQL 완전 이식) ✨ --- */
 async function fetchJiraIssues() {
-    const url = localStorage.getItem('jira_url');
-    const myId = localStorage.getItem('jira_myid');
+    const authId = localStorage.getItem('jira_auth_id');
+    const token = localStorage.getItem('jira_auth_token');
 
-    if(!url || !myId || !localStorage.getItem('jira_auth_token')) return showToast("⚠️ [지라 설정]을 먼저 해주세요!", 'error');
+    if(!authId || !token) return showToast("⚠️ 우측 상단 [지라 설정]을 먼저 해주세요!", 'error');
+
+    // URL 고정 및 ID 자동 추출
+    const url = "http://jira.duzon.com:8080";
+    const myId = authId.split('@')[0].toLowerCase(); // 이메일로 입력해도 앞부분만 빼서 ID로 씀!
 
     showToast("⏳ 지라 데이터 집계 중...", 'loading');
 
     try {
-        const jql = encodeURIComponent(`assignee="${myId}" OR reporter="${myId}" OR creator="${myId}" ORDER BY updated DESC`);
-        const apiUrl = `${url.replace(/\/$/, '')}/rest/api/2/search?jql=${jql}&maxResults=50`;
+        // 나래핑이 준 JQL 쿼리 그대로 적용!
+        const jql = encodeURIComponent(`(assignee = "${myId}" OR reporter = "${myId}" OR creator = "${myId}") AND updated >= startOfWeek()`);
+        const apiUrl = `${url}/rest/api/2/search?jql=${jql}&maxResults=50`;
 
         const response = await fetch(apiUrl, {
             method: 'GET',
@@ -89,6 +90,7 @@ async function fetchJiraIssues() {
         const data = await response.json();
         const issues = data.issues || [];
 
+        // 한국 시간대(KST) 보정하여 오늘 날짜 구하기
         const now = new Date();
         const todayStr = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
 
@@ -106,6 +108,7 @@ async function fetchJiraIssues() {
             const assigneeStr = JSON.stringify(fields.assignee || "").toLowerCase();
             const reporterStr = JSON.stringify(fields.reporter || "").toLowerCase();
             const creatorStr = JSON.stringify(fields.creator || "").toLowerCase();
+            
             const isMe = assigneeStr.includes(myId) || reporterStr.includes(myId) || creatorStr.includes(myId);
 
             if (isMe) {
@@ -117,6 +120,7 @@ async function fetchJiraIssues() {
                 const reportItem = `[${key}] ${summary}\n   └ 상태: ${status} | 접수: ${createdDisplay} | 수정: ${updatedDisplay}`;
 
                 if (!weeklyList.some(item => item.includes(key))) weeklyList.push(reportItem);
+                
                 if (createdDate === todayStr || updatedDate === todayStr) {
                     if (!dailyList.some(item => item.includes(key))) dailyList.push(reportItem);
                 }
@@ -149,12 +153,12 @@ async function fetchJiraIssues() {
 
     } catch (error) {
         hideToast();
-        showToast("⚠️ 지라 API 연결 실패! (Allow CORS 확장을 켜주세요)", 'error');
+        showToast("⚠️ 지라 연결 실패! (Allow CORS 확장을 켜주세요)", 'error');
         console.error(error);
     }
 }
 
-/* --- 나머지 기존 로직 (History, Chunk, Process) --- */
+/* --- 나머지 기존 로직들 --- */
 function toggleSelectAll(masterCb) {
     const cbs = document.querySelectorAll('.history-checkbox');
     cbs.forEach(cb => { cb.checked = masterCb.checked; cb.closest('.history-item').classList.toggle('selected', masterCb.checked); });

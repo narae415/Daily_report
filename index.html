@@ -101,14 +101,10 @@
         </div>
         <div class="jira-form">
             <div class="hint">⚠️ 브라우저에 CORS 우회 확장프로그램(Allow CORS 등)이 켜져 있어야 작동합니다.</div>
-            <label>지라 기본 URL (예: https://jira.company.com)</label>
-            <input type="text" id="j_url" placeholder="마지막에 / 빼고 입력">
-            <label>로그인 이메일 (또는 사번)</label>
-            <input type="text" id="j_auth_id" placeholder="Basic Auth용 ID">
-            <label>API Token (또는 비밀번호)</label>
-            <input type="password" id="j_auth_token" placeholder="토큰 값">
-            <label>내 담당자 ID (JQL 파싱용 - 예: narae15)</label>
-            <input type="text" id="j_myid" placeholder="소문자로 입력">
+            <label>지라 ID (사번 또는 아이디)</label>
+            <input type="text" id="j_auth_id" placeholder="예: narae15">
+            <label>비밀번호 (또는 API Token)</label>
+            <input type="password" id="j_auth_token" placeholder="비밀번호 입력">
             <button class="btn btn-primary" style="margin-top: 10px; padding: 10px;" onclick="saveJiraConfig()">설정 저장하기</button>
         </div>
     </div>
@@ -129,7 +125,7 @@
                 <h3>2. 지라(Jira) 연동 가이드</h3>
                 <ul>
                     <li>브라우저 확장프로그램 <b>[Allow CORS]</b>를 꼭 켜주세요.</li>
-                    <li>[지라 설정]에서 개인 토큰을 등록해야 정상 작동합니다.</li>
+                    <li>[지라 설정]에서 ID/PW를 등록해야 정상 작동합니다.</li>
                 </ul>
             </div>
         </div>
