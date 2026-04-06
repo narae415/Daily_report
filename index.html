@@ -31,6 +31,7 @@
                 <button class="tab-btn" onclick="switchTab(2)">일보고 작성</button>
             </div>
             <div class="nav-actions">
+                <button class="btn btn-jira" onclick="openJiraConfig()">⚙️ 지라 설정</button>
                 <button class="btn btn-primary" onclick="openWiki()">🔗일보고 바로가기</button>
                 <button class="btn btn-copy" style="width: 22px; height: 22px; border-radius: 50%; padding:0; color: #888;" onclick="openHelp()">?</button>
             </div>
@@ -42,11 +43,12 @@
                     <div class="pane-header">
                         <span class="pane-title">✏️작성창</span>
                         <div class="header-buttons">
+                            <button class="btn btn-jira" style="width: 90px; padding: 6px 0;" onclick="fetchJiraIssues()">📥 지라 집계</button>
                             <button class="btn btn-action btn-clear" onclick="clearText('input_box')">Clear</button>
                             <button class="btn btn-action btn-copy" onclick="copyText('input_box')">복사</button>
                         </div>
                     </div>
-                    <textarea id="input_box"></textarea>
+                    <textarea id="input_box" placeholder="여기에 내용을 적거나, [지라 집계] 버튼을 눌러주세요!"></textarea>
                     <div id="input_count" class="char-count">글자 수: 0자</div>
                 </div>
 
@@ -76,7 +78,7 @@
                 <strong>이름:</strong>
                 <input type="text" id="cfg_name" style="width: 90px;">
                 <strong>서비스명:</strong>
-                <input type="text" id="cfg_services" style="width: 320px;" placeholder="ex)회원가입, 로그인, 결제">
+                <input type="text" id="cfg_services" style="width: 250px;" placeholder="ex)회원가입, 로그인">
                 <button class="btn btn-action btn-copy" onclick="applyFixedFormat()">적용/저장</button>
             </div>
             <div class="action-bar">
@@ -87,6 +89,27 @@
                 <button class="btn btn-action btn-clear" onclick="clearText('smart_input')">Clear</button>
             </div>
             <textarea id="smart_input"></textarea>
+        </div>
+    </div>
+</div>
+
+<div id="jira_config_modal" class="modal-overlay" onclick="if(event.target===this) closeJiraConfig()">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">⚙️ Jira 연동 설정 (개인 PC 저장)</div>
+            <button class="btn btn-clear" style="width: 30px; font-size: 20px;" onclick="closeJiraConfig()">×</button>
+        </div>
+        <div class="jira-form">
+            <div class="hint">⚠️ 브라우저에 CORS 우회 확장프로그램(Allow CORS 등)이 켜져 있어야 작동합니다.</div>
+            <label>지라 기본 URL (예: https://jira.company.com)</label>
+            <input type="text" id="j_url" placeholder="마지막에 / 빼고 입력">
+            <label>로그인 이메일 (또는 사번)</label>
+            <input type="text" id="j_auth_id" placeholder="Basic Auth용 ID">
+            <label>API Token (또는 비밀번호)</label>
+            <input type="password" id="j_auth_token" placeholder="토큰 값">
+            <label>내 담당자 ID (JQL 파싱용 - 예: narae15)</label>
+            <input type="text" id="j_myid" placeholder="소문자로 입력">
+            <button class="btn btn-primary" style="margin-top: 10px; padding: 10px;" onclick="saveJiraConfig()">설정 저장하기</button>
         </div>
     </div>
 </div>
@@ -103,11 +126,10 @@
                 <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li></ul>
             </div>
             <div class="help-section">
-                <h3>2. 취합기능 이용</h3>
+                <h3>2. 지라(Jira) 연동 가이드</h3>
                 <ul>
-                    <li>[변환하기]를 누른 내용은 좌측 히스토리에 저장됩니다.</li>
-                    <li>항목 선택 후 [선택 취합하기]로 한 번에 합칠 수 있습니다.</li>
-                    <li>4500자 초과 시 자동 분할되며, 묶음을 클릭해 복사 가능합니다.</li>
+                    <li>브라우저 확장프로그램 <b>[Allow CORS]</b>를 꼭 켜주세요.</li>
+                    <li>[지라 설정]에서 개인 토큰을 등록해야 정상 작동합니다.</li>
                 </ul>
             </div>
         </div>

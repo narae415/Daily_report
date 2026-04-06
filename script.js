@@ -1,9 +1,11 @@
-function showToast(msg, isError = false) {
+/* --- 기본 공통 함수 --- */
+function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
-    toast.className = isError ? 'show error' : 'show';
-    setTimeout(() => toast.className = '', 1500);
+    toast.className = `show ${type === 'error' ? 'error' : (type === 'loading' ? 'loading' : '')}`;
+    if(type !== 'loading') setTimeout(() => toast.className = '', 1500);
 }
+function hideToast() { document.getElementById('toast').className = ''; }
 
 function switchTab(tabNum) {
     document.querySelectorAll('.tab-btn').forEach((btn, idx) => btn.classList.toggle('active', idx + 1 === tabNum));
@@ -34,18 +36,128 @@ function clearText(targetId) {
 }
 
 function copyToClipboard(text, successMsg) {
-    if(!text || !text.trim()) return showToast("⚠️ 복사할 내용이 없습니다.", true);
+    if(!text || !text.trim()) return showToast("⚠️ 복사할 내용이 없습니다.", 'error');
     navigator.clipboard.writeText(text).then(() => showToast(successMsg));
 }
-
 function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
 
+/* --- ✨ 지라 설정 (공통) ✨ --- */
+function openJiraConfig() { 
+    document.getElementById('j_url').value = localStorage.getItem('jira_url') || '';
+    document.getElementById('j_auth_id').value = localStorage.getItem('jira_auth_id') || '';
+    document.getElementById('j_auth_token').value = localStorage.getItem('jira_auth_token') || '';
+    document.getElementById('j_myid').value = localStorage.getItem('jira_myid') || '';
+    document.getElementById('jira_config_modal').classList.add('show'); 
+}
+function closeJiraConfig() { document.getElementById('jira_config_modal').classList.remove('show'); }
+
+function saveJiraConfig() {
+    localStorage.setItem('jira_url', document.getElementById('j_url').value.trim());
+    localStorage.setItem('jira_auth_id', document.getElementById('j_auth_id').value.trim());
+    localStorage.setItem('jira_auth_token', document.getElementById('j_auth_token').value.trim());
+    localStorage.setItem('jira_myid', document.getElementById('j_myid').value.trim().toLowerCase());
+    showToast("✅ 지라 설정 저장 완료!");
+    closeJiraConfig();
+}
+
+function getJiraAuthHeader() {
+    const authId = localStorage.getItem('jira_auth_id');
+    const token = localStorage.getItem('jira_auth_token');
+    return 'Basic ' + btoa(unescape(encodeURIComponent(authId + ':' + token)));
+}
+
+/* --- ✨ 지라 집계 불러오기 (GET) ✨ --- */
+async function fetchJiraIssues() {
+    const url = localStorage.getItem('jira_url');
+    const myId = localStorage.getItem('jira_myid');
+
+    if(!url || !myId || !localStorage.getItem('jira_auth_token')) return showToast("⚠️ [지라 설정]을 먼저 해주세요!", 'error');
+
+    showToast("⏳ 지라 데이터 집계 중...", 'loading');
+
+    try {
+        const jql = encodeURIComponent(`assignee="${myId}" OR reporter="${myId}" OR creator="${myId}" ORDER BY updated DESC`);
+        const apiUrl = `${url.replace(/\/$/, '')}/rest/api/2/search?jql=${jql}&maxResults=50`;
+
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: { 'Authorization': getJiraAuthHeader(), 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        const issues = data.issues || [];
+
+        const now = new Date();
+        const todayStr = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+
+        let dailyList = [];    
+        let weeklyList = [];   
+        let checkList = [];    
+
+        issues.forEach(issue => {
+            const fields = issue.fields;
+            const key = issue.key;
+            const summary = fields.summary;
+            const status = fields.status ? fields.status.name : "상태없음";
+            const statusUpper = status.toUpperCase();
+            
+            const assigneeStr = JSON.stringify(fields.assignee || "").toLowerCase();
+            const reporterStr = JSON.stringify(fields.reporter || "").toLowerCase();
+            const creatorStr = JSON.stringify(fields.creator || "").toLowerCase();
+            const isMe = assigneeStr.includes(myId) || reporterStr.includes(myId) || creatorStr.includes(myId);
+
+            if (isMe) {
+                const createdDate = fields.created.split('T')[0];
+                const updatedDate = fields.updated.split('T')[0];
+                const createdDisplay = new Date(fields.created).toLocaleString('ko-KR').slice(0, -3);
+                const updatedDisplay = new Date(fields.updated).toLocaleString('ko-KR').slice(0, -3);
+
+                const reportItem = `[${key}] ${summary}\n   └ 상태: ${status} | 접수: ${createdDisplay} | 수정: ${updatedDisplay}`;
+
+                if (!weeklyList.some(item => item.includes(key))) weeklyList.push(reportItem);
+                if (createdDate === todayStr || updatedDate === todayStr) {
+                    if (!dailyList.some(item => item.includes(key))) dailyList.push(reportItem);
+                }
+
+                const isUnconfirmed = ["TO DO", "접수", "OPEN", "할 일"].includes(statusUpper);
+                const isTargetStatus = ["검수요청", "QA검토"].includes(status);
+
+                if (isUnconfirmed || isTargetStatus) {
+                    let label = isTargetStatus ? "[검수필요]" : "[미확인]";
+                    checkList.push(`${label} ${key} - ${summary} (${status})`);
+                }
+            }
+        });
+
+        let resultText = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        resultText += `🚀 [오늘 일보고용] - ${todayStr}\n`;
+        resultText += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        resultText += dailyList.length > 0 ? dailyList.join("\n\n") + "\n\n" : "- 오늘 활동 내역이 없습니다. (JQL 확인 필요)\n\n";
+        
+        resultText += "⚠️ [체크 필요 (미확인 / 검수요청)]\n";
+        resultText += checkList.length > 0 ? [...new Set(checkList)].join("\n") + "\n\n" : "- 확인 필요한 지라 없음 👍\n\n";
+        
+        resultText += "📅 [이번 주 주간보고용]\n";
+        resultText += weeklyList.length > 0 ? weeklyList.join("\n\n") : "- 이번 주 활동 내역 없음\n";
+
+        document.getElementById('input_box').value = resultText;
+        updateCount('input_box', 'input_count');
+        hideToast();
+        showToast("✅ 지라 집계 완료!");
+
+    } catch (error) {
+        hideToast();
+        showToast("⚠️ 지라 API 연결 실패! (Allow CORS 확장을 켜주세요)", 'error');
+        console.error(error);
+    }
+}
+
+/* --- 나머지 기존 로직 (History, Chunk, Process) --- */
 function toggleSelectAll(masterCb) {
     const cbs = document.querySelectorAll('.history-checkbox');
-    cbs.forEach(cb => {
-        cb.checked = masterCb.checked;
-        cb.closest('.history-item').classList.toggle('selected', masterCb.checked);
-    });
+    cbs.forEach(cb => { cb.checked = masterCb.checked; cb.closest('.history-item').classList.toggle('selected', masterCb.checked); });
 }
 
 function renderHistory() {
@@ -137,7 +249,7 @@ function createChunkUI(chunks) {
 function mergeHistory() {
     let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
     const cbs = document.querySelectorAll('.history-checkbox:checked');
-    if(!cbs.length) return showToast("⚠️ 항목을 선택해주세요!", true);
+    if(!cbs.length) return showToast("⚠️ 항목을 선택해주세요!", 'error');
     let ids = Array.from(cbs).map(cb => parseInt(cb.value)).sort((a,b)=>b-a);
     let merged = ids.map(id => history[id].text).join('\n\n');
     document.getElementById('output_box').value = merged;
@@ -164,7 +276,7 @@ function splitReports(text) {
 
 function processText() {
     const input = document.getElementById('input_box').value.trimEnd().split('\n');
-    if (!input.join('').trim()) return showToast("⚠️ 변환할 내용이 없습니다.", true);
+    if (!input.join('').trim()) return showToast("⚠️ 변환할 내용이 없습니다.", 'error');
     
     const result = []; let isFixed = false, lastWasTitle = false;
     const romanRegex = /^(i{1,3}|iv|v|vi{1,3}|ix|x)\./i;
@@ -172,7 +284,6 @@ function processText() {
     for (let line of input) {
         const ind = line.length - line.trimStart().length, clean = line.trim();
         if (!clean) { result.push(""); continue; }
-        
         if (clean.startsWith('■') || clean === '[업무]') { isFixed = true; result.push(clean); continue; }
         if (clean.startsWith('[') && clean !== '[업무]') { isFixed = false; result.push(clean); lastWasTitle = true; continue; }
         if (isFixed || ind >= 2) { result.push(line.trimEnd()); lastWasTitle = false; continue; }
@@ -181,29 +292,17 @@ function processText() {
         const isRoman = romanRegex.test(clean);
         const isAlpha = /^[a-z]\./.test(clean) && !isRoman; 
         
-        if (/^\d/.test(clean) && clean.substring(0,3).includes('.')) {
-            result.push(clean);
-        }
-        else if (isAlpha) {
-            result.push("  " + clean);
-        }
+        if (/^\d/.test(clean) && clean.substring(0,3).includes('.')) { result.push(clean); }
+        else if (isAlpha) { result.push("  " + clean); }
         else if (isRoman) {
-            if (result.length && result[result.length-1].trim().match(/^\d+\./)) {
-                result.push("  " + clean);
-            } else {
-                result.push("    " + clean);
-            }
+            if (result.length && result[result.length-1].trim().match(/^\d+\./)) result.push("  " + clean);
+            else result.push("    " + clean);
         }
         else if (clean.startsWith('-')) {
-            if (result.length && result[result.length-1].trim().match(/^\d+\./)) {
-                result.push("  " + clean);
-            } else {
-                result.push("      " + clean);
-            }
+            if (result.length && result[result.length-1].trim().match(/^\d+\./)) result.push("  " + clean);
+            else result.push("      " + clean);
         }
-        else {
-            result.push("        " + clean);
-        }
+        else { result.push("        " + clean); }
         lastWasTitle = false;
     }
     const out = result.join('\n');
@@ -238,7 +337,7 @@ function applyFixedFormat(silent = false) {
 }
 function copyProgress() {
     const name = document.getElementById('cfg_name').value.trim(); 
-    if(!name) return showToast("⚠️ 이름을 먼저 입력해주세요!", true);
+    if(!name) return showToast("⚠️ 이름을 먼저 입력해주세요!", 'error');
     const t = new Date(), txt = `(${name}, 100%, ${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')})`;
     copyToClipboard(txt, `✅ ${txt}`);
 }
