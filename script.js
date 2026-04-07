@@ -197,7 +197,7 @@ function processText() {
     for (let line of input) {
         const clean = line.trim();
         if (!clean) { result.push(""); continue; }
-        if (clean.startsWith('■') || clean === '[업무]') { result.push(clean); continue; }
+        if (clean.startsWith('■') || /^\[.*\]$/.test(clean)) { result.push(clean); continue; }
         if (/^\d/.test(clean)) result.push(clean);
         else if (/^[a-z]\./.test(clean) && !romanRegex.test(clean)) result.push("  " + clean);
         else if (romanRegex.test(clean)) result.push("    " + clean);
