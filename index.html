@@ -4,98 +4,7 @@
     <meta charset="UTF-8">
     <title>Daily Report Maker</title>
     <link rel="icon" type="image/x-icon" href="icon.ico">
-    <style>
-        /* [1] 기본 초기화 */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .app-container { background: #fff; width: 100%; max-width: 1400px; height: 88vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; flex-direction: row; overflow: hidden; }
-        
-        /* [2] 좌측 LNB */
-        .lnb { width: 260px; background: #F8F9FA; border-right: 1px solid #E0E0E0; display: flex; flex-direction: column; z-index: 10; }
-        .lnb-header { height: 43px; padding: 0 15px; font-size: 14px; font-weight: bold; color: #333; border-bottom: 1px solid #E0E0E0; background: #F0F2F5; display: flex; align-items: center; justify-content: space-between; }
-        .select-all-bar { padding: 10px 15px; background: #fff; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 10px; font-size: 11px; color: #666; font-weight: bold; }
-        
-        input[type="checkbox"] { 
-            appearance: none; -webkit-appearance: none; 
-            width: 16px; height: 16px; border: 1px solid #ccc; border-radius: 3px; background: #fff; 
-            cursor: pointer; position: relative; outline: none; transition: 0.2s;
-        }
-        input[type="checkbox"]:checked { background-color: #03A9F4; border-color: #03A9F4; }
-        input[type="checkbox"]:checked::after {
-            content: ''; position: absolute; left: 5px; top: 1px; width: 4px; height: 8px;
-            border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg);
-        }
-
-        .lnb-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; background: #F8F9FA; }
-        .history-item { padding: 10px; background: #fff; border: 1px solid #E0E0E0; border-radius: 6px; cursor: pointer; transition: 0.2s; display: flex; align-items: flex-start; gap: 8px; }
-        .history-item:hover { border-color: #B3E5FC; background: #FAFDFF; }
-        .history-item.selected { border-color: #81D4FA; background: #F1F9FF; }
-        .history-time { font-size: 10px; color: #888; margin-bottom: 3px; font-weight: bold; }
-        .history-preview { font-size: 11px; color: #555; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
-        .history-empty { text-align: center; color: #888; font-size: 12px; padding: 30px 10px; }
-        .lnb-actions { height: 55px; padding: 10px 12px; border-top: 1px solid #E0E0E0; background: #fff; display: flex; gap: 6px; align-items: center; }
-        
-        /* [3] 우측 메인 영역 */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
-        .top-nav { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #E0E0E0; height: 43px; }
-        .tab-header { display: flex; flex: 1; height: 100%; }
-        .tab-btn { width: 120px; height: 100%; border: none; background: transparent; font-size: 13px; font-weight: bold; color: #888; cursor: pointer; transition: all 0.2s; outline: none; border-right: 1px solid #EEE; }
-        .tab-btn.active { background: #757575; color: #FFFFFF; border-right: none; }
-        .nav-actions { padding-right: 15px; display: flex; align-items: center; gap: 8px; height: 100%; }
-        
-        .tab-content { flex: 1; padding: 20px; display: none; flex-direction: column; overflow: hidden; }
-        .tab-content.active { display: flex; }
-
-        .btn { border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; color: #333; outline: none; padding: 6px 12px; display: flex; justify-content: center; align-items: center; white-space: nowrap; }
-        .btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
-        .btn:active { transform: translateY(1px); }
-        .btn-action { width: 65px; text-align: center; padding: 6px 0; } 
-        .btn-clear { background: #FFEBEE; color: #E57373; }
-        .btn-copy { background: #E0E0E0; }
-        .btn-primary { background: #D4EFFF; } 
-        
-        /* 분할 묶음 박스 */
-        .chunk-box { width: 100%; border: 1px solid #E0E0E0; border-radius: 6px; margin-bottom: 8px; overflow: hidden; background: #fff; }
-        .chunk-header { display: flex; justify-content: space-between; align-items: center; background: #FFFDE7; padding: 8px 12px; cursor: pointer; }
-        .chunk-header:hover { background: #FFF9C4; }
-        .chunk-title { font-size: 11px; font-weight: bold; color: #F57F17; }
-        .chunk-info { font-size: 10px; color: #888; margin-left: auto; margin-right: 10px; font-weight: normal; }
-        .chunk-body { display: none; padding: 10px; background: #FAFAFA; border-top: 1px solid #EEE; }
-        .chunk-body textarea { height: 80px; font-size: 11px; background: transparent; border: none; padding: 0; width: 100%; resize: none; outline: none; line-height: 1.5; color: #666; }
-        .chunk-box.open .chunk-body { display: block; }
-
-        textarea { width: 100%; flex: 1; border: 1px solid #E0E0E0; border-radius: 8px; padding: 12px; font-family: 'Malgun Gothic', sans-serif; font-size: 13px; resize: none; outline: none; transition: 0.2s; line-height: 1.6; }
-        textarea:focus { border-color: #757575; box-shadow: 0 0 0 3px rgba(117,117,117,0.1); }
-        .char-count { text-align: right; font-size: 11px; color: #888; margin-top: 4px; margin-bottom: 6px; font-weight: bold; }
-
-        .converter-layout { display: flex; gap: 15px; height: 100%; }
-        .pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .pane-title { font-size: 13px; font-weight: bold; color: #555; display: flex; align-items: center; gap: 4px; }
-        .header-buttons { display: flex; gap: 5px; }
-        .mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; gap: 8px; }
-        .chunk-container { display: flex; flex-direction: column; overflow-y: auto; max-height: 220px; padding-top: 5px; }
-        .chunk-label { font-size: 11px; font-weight: bold; color: #FF5722; margin-bottom: 8px; display: none; }
-
-        .config-bar { display: flex; align-items: center; gap: 12px; background: #FCFCFC; border: 1px solid #E0E0E0; padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; }
-        .config-bar input { padding: 6px 10px; border: 1px solid #E0E0E0; border-radius: 6px; outline: none; font-family: inherit; font-size: 12px; }
-        .action-bar { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center; }
-        .action-left { display: flex; gap: 8px; }
-
-        #toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: 0.3s; transform: translateY(20px); pointer-events: none; z-index: 1000; }
-        #toast.show { opacity: 1; transform: translateY(0); }
-        #toast.error { background: #F44336; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.2s; }
-        .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content { background: #fff; width: 90%; max-width: 600px; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; transform: translateY(20px); transition: 0.3s; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E0E0E0; padding-bottom: 15px; margin-bottom: 15px; }
-        .modal-title { font-size: 18px; font-weight: bold; color: #333; }
-        .help-section { margin-bottom: 20px; }
-        .help-section h3 { font-size: 14px; color: #03A9F4; margin-bottom: 8px; }
-        .help-section li { font-size: 12px; color: #555; line-height: 1.8; margin-bottom: 4px; list-style: none; }
-        .help-section li::before { content: "•"; color: #03A9F4; margin-right: 10px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -118,8 +27,8 @@
     <div class="main-content">
         <div class="top-nav">
             <div class="tab-header">
-                <button class="tab-btn active" onclick="switchTab(1)">공백 변환기</button>
-                <button class="tab-btn" onclick="switchTab(2)">일보고 작성</button>
+                <button class="tab-btn active" onclick="switchTab(1)">일보고 도우미</button>
+                <button class="tab-btn" onclick="switchTab(2)">지라 집계</button>
             </div>
             <div class="nav-actions">
                 <button class="btn btn-primary" onclick="openWiki()">🔗일보고 바로가기</button>
@@ -131,23 +40,23 @@
             <div class="converter-layout">
                 <div class="pane">
                     <div class="pane-header">
-                        <span class="pane-title">✏️작성창</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="pane-title">✏️작성창</span>
+                            <button class="btn btn-copy" style="width:22px;height:22px;border-radius:50%;padding:0;font-size:13px;" onclick="openSettings()" title="설정">⚙️</button>
+                        </div>
                         <div class="header-buttons">
                             <button class="btn btn-action btn-clear" onclick="clearText('input_box')">Clear</button>
-                            <button class="btn btn-action btn-copy" onclick="copyText('input_box')">복사</button>
+                            <button class="btn btn-action btn-primary" onclick="applyFixedFormat()">양식 불러오기</button>
+                            <button class="btn btn-action btn-copy" onclick="copyText('input_box')">내용복사</button>
+                            <button class="btn btn-action btn-copy" onclick="copyProgress()">진행률 복사</button>
                         </div>
                     </div>
-                    <textarea id="input_box"></textarea>
+                    <textarea id="input_box" placeholder="내용을 입력하세요."></textarea>
                     <div id="input_count" class="char-count">글자 수: 0자</div>
                 </div>
-
-                <div class="mid-buttons">
-                    <button class="btn btn-primary" style="width: 80px; height: 35px;" onclick="processText()">변환</button>
-                </div>
-
+                <div class="mid-buttons"><button class="btn btn-primary" style="width: 80px; height: 35px;" onclick="processText()">변환</button></div>
                 <div class="pane">
-                    <div class="pane-header">
-                        <span class="pane-title">📃변환결과</span>
+                    <div class="pane-header"><span class="pane-title">📃변환결과</span>
                         <div class="header-buttons">
                             <button class="btn btn-action btn-clear" onclick="clearText('output_box')">Clear</button>
                             <button class="btn btn-action btn-copy" onclick="copyText('output_box')">복사</button>
@@ -155,365 +64,159 @@
                     </div>
                     <textarea id="output_box" readonly style="background: #FAFAFA;"></textarea>
                     <div id="output_count" class="char-count">전체 글자 수: 0자</div>
-                    
-                    <span class="chunk-label" id="chunk_label">💡 메신저 분할 확인(4500자):</span>
-                    <div class="chunk-container" id="chunk_buttons"></div>
+                    <div id="sets_container" style="display:none; overflow-y:auto; max-height:160px; margin-top:6px;"></div>
                 </div>
             </div>
         </div>
 
         <div id="tab2" class="tab-content">
-            <div class="config-bar">
-                <strong>이름:</strong>
-                <input type="text" id="cfg_name" style="width: 90px;">
-                <strong>서비스명:</strong>
-                <input type="text" id="cfg_services" style="width: 320px;" placeholder="ex)회원가입, 로그인, 결제">
-                <button class="btn btn-action btn-copy" onclick="applyFixedFormat()">적용/저장</button>
-            </div>
-            <div class="action-bar">
-                <div class="action-left">
-                    <button class="btn btn-copy" style="padding: 6px 12px;" onclick="copyProgress()">복사(이름, 100%, MM/DD)</button>
-                    <button class="btn btn-action btn-copy" onclick="copyText('smart_input')">복사</button>
+            <div class="pane-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="pane-title" style="color: #0288D1;">📥 Jira 데이터</span>
+                    <button class="btn btn-copy" style="width: 18px; height: 18px; border-radius: 50%; padding:0; font-size:10px;" onclick="openJiraHelp()">?</button>
                 </div>
-                <button class="btn btn-action btn-clear" onclick="clearText('smart_input')">Clear</button>
+                <div class="header-buttons">
+                    <button class="btn btn-primary" style="padding: 6px 15px;" onclick="loadJiraFromClipboard()">📋 불러오기</button>
+                    <button class="btn btn-action btn-clear" onclick="clearText('jira_input_box')">Clear</button>
+                </div>
             </div>
-            <textarea id="smart_input"></textarea>
+            <textarea id="jira_input_box" placeholder="Jira에서 추출된 텍스트를 붙여넣으세요."></textarea>
+            <div id="jira_input_count" class="char-count">글자 수: 0자</div>
         </div>
     </div>
 </div>
 
-<div id="help_modal" class="modal-overlay" onclick="if(event.target===this) closeHelp()">
-    <div class="modal-content">
+<div id="settings_modal" class="modal-overlay" onclick="if(event.target===this) closeSettings()">
+    <div class="modal-content" style="max-width: 380px;">
         <div class="modal-header">
-            <div class="modal-title">📖 사용법 및 주의사항</div>
-            <button class="btn btn-clear" style="width: 30px; font-size: 20px;" onclick="closeHelp()">×</button>
+            <div class="modal-title">⚙️ 설정</div>
+            <button class="btn btn-clear" onclick="closeSettings()">×</button>
         </div>
-        <div style="overflow-y: auto;">
-            <div class="help-section">
-                <h3>1. 변환기능 이용</h3>
-                <ul><li>위키 양식에 맞춰 자동으로 들여쓰기 공백이 추가됩니다.</li></ul>
+        <div style="display:flex; flex-direction:column; gap:14px; padding-top:4px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:12px; font-weight:bold; color:#555;">이름</label>
+                <input type="text" id="cfg_name" style="padding:8px 10px; border:1px solid #E0E0E0; border-radius:6px; font-size:13px; outline:none;">
             </div>
-            <div class="help-section">
-                <h3>2. 취합기능 이용</h3>
-                <ul>
-                    <li>[변환하기]를 누른 내용은 좌측 히스토리에 저장됩니다.</li>
-                    <li>항목 선택 후 [선택 취합하기]로 한 번에 합칠 수 있습니다.</li>
-                    <li>4500자 초과 시 자동 분할되며, 묶음을 클릭해 복사 가능합니다.</li>
-                </ul>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="font-size:12px; font-weight:bold; color:#555;">서비스명</label>
+                <input type="text" id="cfg_services" placeholder="ex) 회원가입, 로그인" style="padding:8px 10px; border:1px solid #E0E0E0; border-radius:6px; font-size:13px; outline:none;">
             </div>
+            <div style="display:flex; align-items:center; gap:8px; padding: 4px 0;">
+                <input type="checkbox" id="cfg_show_popup" checked style="width:15px; height:15px; cursor:pointer; accent-color:#0288D1;">
+                <label for="cfg_show_popup" style="font-size:12px; color:#555; cursor:pointer;">변환 완료 후 할 일 팝업 띄우기</label>
+            </div>
+            <button class="btn btn-primary" style="width:100%; padding:9px 0; margin-top:4px;" onclick="saveSettings()">저장</button>
+        </div>
+    </div>
+</div>
+
+<div id="complete_modal" class="modal-overlay" onclick="if(event.target===this) closeCompletePopup()">
+    <div class="modal-content complete-popup" style="max-width:380px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:8px;">🎉</div>
+        <div style="font-size:15px; font-weight:bold; color:#222; margin-bottom:18px;">변환 완료!</div>
+        <div style="text-align:left; font-size:13px; color:#444; background:#f9f9f9; border-radius:8px; padding:14px 18px; margin-bottom:18px; display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px; white-space:nowrap;">
+                <span style="font-size:18px;">📋</span>
+                <span>위키에 변환 내용 추가하기</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; white-space:nowrap;">
+                <span style="font-size:18px;">💬</span>
+                <span>개인공간에 보고용 메신저 내용 저장해두기</span>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; padding:9px 0;" onclick="closeCompletePopup()">확인</button>
+    </div>
+</div>
+
+<div id="help_modal" class="modal-overlay" onclick="if(event.target===this) closeHelp()">
+    <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header">
+            <div class="modal-title">Daily Report Maker 사용 가이드</div>
+            <button class="btn btn-clear" onclick="closeHelp()">×</button>
+        </div>
+        <div style="max-height: 68vh; overflow-y: auto; padding-right: 8px; font-size: 13px; line-height: 1.7; color: #444;">
+
+            <div class="jira-guide-section">
+                <div class="jira-guide-title">일보고 도우미</div>
+                <div class="help-meta">
+                    <div class="help-meta-label">⚙️ 설정</div><div>이름·서비스명 입력 후 저장. 진행률 복사·양식 불러오기에 자동 반영됩니다.</div>
+                    <div class="help-meta-label">양식 불러오기</div><div>설정된 이름·서비스명으로 기본 보고 양식을 작성창에 자동 생성합니다.</div>
+                    <div class="help-meta-label">스마트 넘버링</div><div><b>Tab</b> 들여쓰기 / <b>Shift+Tab</b> 내어쓰기 / <b>Enter</b> 다음 항목 생성 / <b>빈 항목 Enter</b> 레벨 탈출. 삭제·추가 시 번호 자동 재계산.</div>
+                    <div class="help-meta-label">변환</div><div>작성창 내용을 Wiki 들여쓰기 규격으로 변환하여 변환결과에 출력합니다.</div>
+                    <div class="help-meta-label">내용 복사</div><div>변환결과 전체를 클립보드에 복사합니다.</div>
+                    <div class="help-meta-label">진행률 복사</div><div><b>(이름 / 100% / MM/DD)</b> 형식으로 복사합니다.</div>
+                </div>
+            </div>
+
+            <div class="jira-guide-section">
+                <div class="jira-guide-title">히스토리</div>
+                <div class="help-meta">
+                    <div class="help-meta-label">자동 저장</div><div>변환 완료 시 결과가 좌측 히스토리에 자동 저장됩니다. (최대 30건)</div>
+                    <div class="help-meta-label">선택 취합</div><div>항목 체크 후 [선택 취합하기]를 누르면 내용이 합쳐져 변환결과에 출력됩니다.</div>
+                    <div class="help-meta-label">세트 분할</div><div>취합 결과가 4,500자를 초과하면 <b>■ 이름</b> 단위로 자동 분할되어 세트별 미리보기·복사 버튼이 표시됩니다.</div>
+                </div>
+            </div>
+
+            <div class="jira-guide-section" style="margin-bottom:0;">
+                <div class="jira-guide-title">지라 집계</div>
+                <div class="help-meta">
+                    <div class="help-meta-label">북마크릿</div><div>Jira가 열린 브라우저에서 북마크릿 클릭 한 번으로 금주 업무 내역이 지라 집계 탭에 자동 반영됩니다.</div>
+                    <div class="help-meta-label">등록 방법</div><div>지라 집계 탭의 <b>?</b> 버튼에서 북마크릿 등록 가이드를 확인할 수 있습니다.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="jira_help_modal" class="modal-overlay" onclick="if(event.target===this) closeJiraHelp()">
+    <div class="modal-content" style="max-width: 580px;">
+        <div class="modal-header">
+            <div class="modal-title">Jira 업무 활동 내역 추출기</div>
+            <button class="btn btn-clear" onclick="closeJiraHelp()">×</button>
+        </div>
+        <div style="max-height: 72vh; overflow-y: auto; padding-right: 8px; font-size: 13px; line-height: 1.7; color: #444;">
+
+            <p style="color: #888; font-size: 12px; margin-bottom: 20px;">Jira API를 활용해 금주 내 본인이 담당·보고·생성한 티켓 활동 내역을 자동 수집합니다.<br>사내망 또는 VPN이 연결된 환경, Jira가 로그인된 브라우저에서만 작동합니다.</p>
+
+            <div class="jira-guide-section">
+                <div class="jira-guide-title">빠른 사용법</div>
+                <ol class="jira-guide-ol">
+                    <li>하단 <b>등록 방법</b>에 따라 북마크릿을 브라우저에 한 번만 등록합니다.</li>
+                    <li>Jira가 열린 상태에서 등록한 <b>북마크릿</b>을 클릭합니다.</li>
+                    <li>이 페이지가 자동으로 열리며 <b>[지라 집계]</b> 탭에 내역이 바로 반영됩니다.<br>
+                        <span style="color:#888; font-size:11px;">메모장 등 다른 곳에 붙여넣기(Ctrl+V)해서 조회하는 것도 가능합니다.</span>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="jira-guide-section">
+                <div class="jira-guide-title">수집 기준</div>
+                <div class="jira-guide-meta">
+                    <div><span class="jira-meta-label">수집 대상</span>금주(월~일) 내 담당/보고/생성한 모든 티켓</div>
+                    <div><span class="jira-meta-label">분류 기준</span>상태값에 따라 완료 / 업데이트 / 미확인 자동 구분</div>
+                    <div><span class="jira-meta-label">특수 처리</span>WQA 티켓 설명 추출 · 중복 HELP 티켓 필터링</div>
+                </div>
+            </div>
+
+            <div class="jira-guide-section jira-guide-register">
+                <div class="jira-guide-title">북마크릿 최초 등록 방법</div>
+                <ol class="jira-guide-ol">
+                    <li>아래 [코드 복사] 버튼을 클릭합니다.</li>
+                    <div style="display:flex; gap:8px; margin:8px 0 4px 0;">
+                        <input type="text" id="bookmark_code_display" readonly style="flex:1; padding:7px 10px; font-size:11px; background:#f5f5f5; border:1px solid #E0E0E0; border-radius:6px; color:#aaa;">
+                        <button class="btn btn-primary" onclick="copyBookmarkCode()">코드 복사</button>
+                    </div>
+                    <li>브라우저 북마크 바 우클릭 → <b>[페이지 추가]</b> 선택</li>
+                    <li>이름(예: <b>Jira 추출</b>) 입력 후 URL 칸에 복사한 코드를 붙여넣기(Ctrl+V)하여 저장합니다.</li>
+                </ol>
+            </div>
+
         </div>
     </div>
 </div>
 
 <div id="toast">알림 메시지</div>
-
-<script>
-    function showToast(msg, isError = false) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.className = isError ? 'show error' : 'show';
-        setTimeout(() => toast.className = '', 1500);
-    }
-
-    function switchTab(tabNum) {
-        document.querySelectorAll('.tab-btn').forEach((btn, idx) => btn.classList.toggle('active', idx + 1 === tabNum));
-        document.querySelectorAll('.tab-content').forEach((content, idx) => content.classList.toggle('active', idx + 1 === tabNum));
-    }
-
-    function openWiki() {
-        const t = new Date();
-        const mm = String(t.getMonth()+1).padStart(2,'0'), dd = String(t.getDate()).padStart(2,'0');
-        window.open(`http://wiki.duzon.com:8080/display/DW/%5BWE1U-QA-Cell%5D+${mm}.${dd}+%3A%3A+2026`, '_blank');
-    }
-
-    function openHelp() { document.getElementById('help_modal').classList.add('show'); }
-    function closeHelp() { document.getElementById('help_modal').classList.remove('show'); }
-
-    function updateCount(inputId, labelId) {
-        const text = document.getElementById(inputId).value;
-        const count = text.replace(/\n+$/, '').length; 
-        document.getElementById(labelId).textContent = (inputId === 'output_box' ? '전체 글자 수: ' : '글자 수: ') + count + '자';
-    }
-
-    function clearText(targetId) {
-        if(confirm("내용을 모두 지우시겠습니까?")) {
-            document.getElementById(targetId).value = "";
-            if(targetId === 'input_box') updateCount('input_box', 'input_count');
-            saveConfig(); 
-        }
-    }
-
-    function copyToClipboard(text, successMsg) {
-        if(!text || !text.trim()) return showToast("⚠️ 복사할 내용이 없습니다.", true);
-        navigator.clipboard.writeText(text).then(() => showToast(successMsg));
-    }
-
-    function copyText(targetId) { copyToClipboard(document.getElementById(targetId).value, "✅ 복사 완료!"); }
-
-    function toggleSelectAll(masterCb) {
-        const cbs = document.querySelectorAll('.history-checkbox');
-        cbs.forEach(cb => {
-            cb.checked = masterCb.checked;
-            cb.closest('.history-item').classList.toggle('selected', masterCb.checked);
-        });
-    }
-
-    function renderHistory() {
-        const list = document.getElementById('history_list');
-        let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
-        list.innerHTML = history.length ? '' : '<div class="history-empty">기록이 없습니다.</div>';
-        document.getElementById('master_checkbox').checked = false;
-
-        history.forEach((item, idx) => {
-            const div = document.createElement('div');
-            div.className = 'history-item';
-            div.onclick = function(e) {
-                const cb = this.querySelector('.history-checkbox');
-                if(e.target !== cb) cb.checked = !cb.checked;
-                this.classList.toggle('selected', cb.checked);
-                const allCbs = document.querySelectorAll('.history-checkbox');
-                const checkedCbs = document.querySelectorAll('.history-checkbox:checked');
-                document.getElementById('master_checkbox').checked = (allCbs.length > 0 && allCbs.length === checkedCbs.length);
-            };
-            div.innerHTML = `<input type="checkbox" class="history-checkbox" value="${idx}">
-                <div style="flex:1; overflow:hidden;">
-                    <div class="history-time">${item.time}</div>
-                    <div class="history-preview">${item.text}</div>
-                </div>`;
-            list.appendChild(div);
-        });
-    }
-
-    function saveHistory(text) {
-        if(!text.trim()) return;
-        let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
-        const t = new Date();
-        const timeStr = `${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
-        if (history.length && history[0].text === text) return;
-        history.unshift({ time: timeStr, text: text });
-        if(history.length > 30) history.pop();
-        localStorage.setItem('dailyReportHistory', JSON.stringify(history));
-        renderHistory();
-    }
-
-    function deleteHistory() {
-        let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
-        const cbs = document.querySelectorAll('.history-checkbox:checked');
-        if(!cbs.length) {
-            if(confirm("기록을 전체 삭제하시겠습니까?")) { localStorage.removeItem('dailyReportHistory'); renderHistory(); showToast("✅ 삭제 완료!"); }
-            return;
-        }
-        if(confirm(`${cbs.length}건을 삭제하시겠습니까?`)) {
-            let ids = Array.from(cbs).map(cb => parseInt(cb.value)).sort((a,b)=>b-a);
-            ids.forEach(id => history.splice(id, 1));
-            localStorage.setItem('dailyReportHistory', JSON.stringify(history));
-            renderHistory();
-        }
-    }
-
-    function createChunkUI(chunks) {
-        const container = document.getElementById('chunk_buttons');
-        container.innerHTML = '';
-        const label = document.getElementById('chunk_label');
-        if (chunks.length <= 1) { label.style.display = 'none'; return; }
-        label.style.display = 'inline-block';
-
-        chunks.forEach((text, i) => {
-            const box = document.createElement('div');
-            box.className = 'chunk-box';
-            const header = document.createElement('div');
-            header.className = 'chunk-header';
-            header.onclick = () => box.classList.toggle('open');
-            const title = document.createElement('span');
-            title.className = 'chunk-title';
-            title.textContent = `📦 ${i+1}번 묶음`;
-            const info = document.createElement('span');
-            info.className = 'chunk-info';
-            info.textContent = `(${text.length}자)`;
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'btn btn-primary';
-            copyBtn.style.cssText = 'padding:2px 8px; font-size:10px;';
-            copyBtn.textContent = '복사';
-            const targetText = text; 
-            copyBtn.onclick = (e) => { e.stopPropagation(); copyToClipboard(targetText, `✅ ${i+1}번 복사 완료!`); };
-            header.appendChild(title); header.appendChild(info); header.appendChild(copyBtn);
-            const body = document.createElement('div');
-            body.className = 'chunk-body';
-            const area = document.createElement('textarea'); area.readOnly = true; area.value = text;
-            body.appendChild(area); box.appendChild(header); box.appendChild(body); container.appendChild(box);
-        });
-    }
-
-    function mergeHistory() {
-        let history = JSON.parse(localStorage.getItem('dailyReportHistory')) || [];
-        const cbs = document.querySelectorAll('.history-checkbox:checked');
-        if(!cbs.length) return showToast("⚠️ 항목을 선택해주세요!", true);
-        let ids = Array.from(cbs).map(cb => parseInt(cb.value)).sort((a,b)=>b-a);
-        let merged = ids.map(id => history[id].text).join('\n\n');
-        document.getElementById('output_box').value = merged;
-        updateCount('output_box', 'output_count');
-        createChunkUI(splitReports(merged));
-        showToast("✅ 취합 완료!");
-    }
-
-    function splitReports(text) {
-        const lines = text.split('\n'), people = []; let curr = [];
-        for (let l of lines) {
-            if (l.startsWith('■ ')) { if (curr.length) people.push(curr.join('\n')); curr = [l]; }
-            else curr.push(l);
-        }
-        if (curr.length) people.push(curr.join('\n'));
-        const chunks = []; let chunk = "";
-        for (let p of people) {
-            if (chunk.length + p.length + 2 > 4500) { chunks.push(chunk.trim()); chunk = p; }
-            else chunk = chunk ? chunk + "\n\n" + p : p;
-        }
-        if (chunk) chunks.push(chunk.trim());
-        return chunks;
-    }
-
-    /* ✨ ㅂ변환할 때 iv. 가 삐져나가는 버그 해결 패치 ✨ */
-    function processText() {
-        const input = document.getElementById('input_box').value.trimEnd().split('\n');
-        if (!input.join('').trim()) return showToast("⚠️ 변환할 내용이 없습니다.", true);
-        
-        const result = []; let isFixed = false, lastWasTitle = false;
-        
-        // 로마자 감지용 정규식 (i., ii., iv., v., vi. 등을 소문자 순번과 구분해서 정확히 체크)
-        const romanRegex = /^(i{1,3}|iv|v|vi{1,3}|ix|x)\./i;
-
-        for (let line of input) {
-            const ind = line.length - line.trimStart().length, clean = line.trim();
-            if (!clean) { result.push(""); continue; }
-            
-            // 고정 타이틀 예외 처리
-            if (clean.startsWith('■') || clean === '[업무]') { isFixed = true; result.push(clean); continue; }
-            if (clean.startsWith('[') && clean !== '[업무]') { isFixed = false; result.push(clean); lastWasTitle = true; continue; }
-            if (isFixed || ind >= 2) { result.push(line.trimEnd()); lastWasTitle = false; continue; }
-            if (lastWasTitle) { result.push(clean); lastWasTitle = false; continue; }
-            
-            // ✨ 핵심: 로마자 iv. 판단 로직 고도화 ✨
-            const isRoman = romanRegex.test(clean);
-            const isAlpha = /^[a-z]\./.test(clean) && !isRoman; // 로마자가 아닌 순수 소문자 a. b. c...
-            
-            if (/^\d/.test(clean) && clean.substring(0,3).includes('.')) {
-                result.push(clean); // 1. 숫자는 0칸
-            }
-            else if (isAlpha) {
-                result.push("  " + clean); // a. 소문자는 2칸
-            }
-            else if (isRoman) {
-                // iv. 같은 로마자는 무조건 4칸!
-                // (단, 직전 라인이 숫자(1.)인 경우 위키 스타일에 맞춰 2칸으로 땡겨줌)
-                if (result.length && result[result.length-1].trim().match(/^\d+\./)) {
-                    result.push("  " + clean);
-                } else {
-                    result.push("    " + clean);
-                }
-            }
-            else if (clean.startsWith('-')) {
-                // - 하이픈은 6칸 (단, 직전 라인이 숫자면 2칸)
-                if (result.length && result[result.length-1].trim().match(/^\d+\./)) {
-                    result.push("  " + clean);
-                } else {
-                    result.push("      " + clean);
-                }
-            }
-            else {
-                result.push("        " + clean); // 일반 텍스트 8칸
-            }
-            lastWasTitle = false;
-        }
-        const out = result.join('\n');
-        document.getElementById('output_box').value = out;
-        updateCount('output_box', 'output_count');
-        saveHistory(out);
-        createChunkUI(splitReports(out));
-        showToast("✅ 변환 완료!");
-    }
-
-    function saveConfig() {
-        const data = { name: document.getElementById('cfg_name').value.trim(), services: document.getElementById('cfg_services').value.trim(), inputBoxText: document.getElementById('input_box').value, smartInputText: document.getElementById('smart_input').value };
-        localStorage.setItem('dailyReportConfig', JSON.stringify(data));
-    }
-    function loadConfig() {
-        const data = JSON.parse(localStorage.getItem('dailyReportConfig'));
-        if (data) {
-            document.getElementById('cfg_name').value = data.name || "";
-            document.getElementById('cfg_services').value = data.services || "";
-            document.getElementById('input_box').value = data.inputBoxText || "";
-            document.getElementById('smart_input').value = data.smartInputText || "";
-            updateCount('input_box', 'input_count');
-            if (!data.smartInputText || data.smartInputText.trim() === "") applyFixedFormat(true);
-        }
-    }
-    function applyFixedFormat(silent = false) {
-        const name = document.getElementById('cfg_name').value.trim(), svcs = document.getElementById('cfg_services').value.trim().split(',');
-        if (!name || !svcs[0]) return;
-        let txt = `■ ${name}\n[업무]\n` + svcs.map(s => s.trim() ? `- ${s.trim()}` : '').filter(s=>s).join('\n');
-        document.getElementById('smart_input').value = txt;
-        saveConfig(); if(!silent) showToast("✅ 양식 적용 완료!");
-    }
-    function copyProgress() {
-        const name = document.getElementById('cfg_name').value.trim(); 
-        if(!name) return showToast("⚠️ 이름을 먼저 입력해주세요!", true);
-        const t = new Date(), txt = `(${name}, 100%, ${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')})`;
-        copyToClipboard(txt, `✅ ${txt}`);
-    }
-
-    const ROMANS = ["i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"];
-    function getNextBullet(lines, type, ind) {
-        for (let i = lines.length-1; i>=0; i--) {
-            const line = lines[i], clean = line.trim(), lineInd = line.length - line.trimStart().length;
-            if (lineInd === ind) {
-                if (type === 'num' && /^\d+\./.test(clean)) return (parseInt(clean.match(/^(\d+)/)[1])+1) + ". ";
-                if (type === 'alpha' && /^[a-z]\./.test(clean)) return String.fromCharCode(clean.charCodeAt(0)+1) + ". ";
-                if (type === 'roman' && /^[ivx]+\./.test(clean)) { 
-                    const match = clean.match(/^([ivx]+)/i);
-                    if (match) {
-                        let idx = ROMANS.indexOf(match[1].toLowerCase());
-                        return (idx !== -1 && idx < ROMANS.length - 1) ? ROMANS[idx+1] + ". " : "i. ";
-                    }
-                }
-            }
-            if (lineInd < ind && clean) break;
-        }
-        return { num: '1. ', alpha: 'a. ', roman: 'i. ' }[type] || "- ";
-    }
-    function insertAtCursor(ta, txt, del=0) {
-        const start = ta.selectionStart, val = ta.value;
-        ta.value = val.substring(0, start-del) + txt + val.substring(start);
-        ta.selectionStart = ta.selectionEnd = start - del + txt.length;
-    }
-    document.getElementById('smart_input').addEventListener('keydown', function(e) {
-        if (e.isComposing) return;
-        const ta = this, val = ta.value, cursor = ta.selectionStart, linesBefore = val.substring(0, cursor).split('\n'), curr = linesBefore[linesBefore.length-1], clean = curr.trim(), ind = curr.length - curr.trimStart().length, indStr = curr.substring(0, ind);
-        if (e.key === 'Enter') {
-            if (/^\s*(\d+\. |[a-z]\. |[ivx]+\. |- )$/.test(curr)) {
-                e.preventDefault(); let rep = "";
-                if (curr.includes("-")) rep = "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4);
-                else if (/^\s*[ivx]+\./.test(curr)) rep = "  " + getNextBullet(linesBefore.slice(0,-1), 'alpha', 2);
-                else if (/^\s*[a-z]\./.test(curr)) rep = getNextBullet(linesBefore.slice(0,-1), 'num', 0);
-                insertAtCursor(ta, rep, curr.length); saveConfig(); return;
-            }
-            if (/^[ivx]+\./i.test(clean)) { e.preventDefault(); insertAtCursor(ta, "\n"+indStr+getNextBullet(linesBefore, 'roman', ind)); saveConfig(); }
-            else if (/^\d+\./.test(clean)) { e.preventDefault(); insertAtCursor(ta, "\n"+indStr+getNextBullet(linesBefore, 'num', ind)); saveConfig(); }
-            else if (/^[a-z]\./.test(clean)) { e.preventDefault(); insertAtCursor(ta, "\n"+indStr+getNextBullet(linesBefore, 'alpha', ind)); saveConfig(); }
-            else if (clean.startsWith("-")) { e.preventDefault(); insertAtCursor(ta, "\n"+indStr+"- "); saveConfig(); }
-        } else if (e.key === 'Tab') {
-            if (/^\s*\d+\.\s$/.test(curr)) { e.preventDefault(); insertAtCursor(ta, "  "+getNextBullet(linesBefore.slice(0,-1), 'alpha', 2), curr.length); saveConfig(); }
-            else if (/^\s*[a-z]\.\s$/.test(curr)) { e.preventDefault(); insertAtCursor(ta, "    "+getNextBullet(linesBefore.slice(0,-1), 'roman', 4), curr.length); saveConfig(); }
-            else if (/^\s*[ivx]+\.\s$/.test(curr)) { e.preventDefault(); insertAtCursor(ta, "      - ", curr.length); saveConfig(); }
-        } else if (e.key === 'Backspace' && /^\s*(\d+\. |[a-z]\. |[ivx]+\. |- )$/.test(curr)) {
-            e.preventDefault(); let rep = "";
-            if (curr.includes("-")) rep = "    " + getNextBullet(linesBefore.slice(0,-1), 'roman', 4);
-            else if (/^\s*[ivx]+\./.test(curr)) rep = "  " + getNextBullet(linesBefore.slice(0,-1), 'alpha', 2);
-            else if (/^\s*[a-z]\./.test(curr)) rep = getNextBullet(linesBefore.slice(0,-1), 'num', 0);
-            insertAtCursor(ta, rep, curr.length); saveConfig();
-        }
-    });
-
-    window.onload = () => { loadConfig(); renderHistory(); };
-</script>
+<script src="script.js"></script>
 </body>
 </html>

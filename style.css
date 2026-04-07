@@ -1,0 +1,82 @@
+/* [1] 기본 초기화 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+.app-container { background: #fff; width: 100%; max-width: 1400px; height: 88vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); display: flex; overflow: hidden; }
+
+/* [2] 좌측 LNB */
+.lnb { width: 260px; background: #F8F9FA; border-right: 1px solid #E0E0E0; display: flex; flex-direction: column; flex-shrink: 0; }
+.lnb-header { height: 43px; padding: 0 15px; font-size: 14px; font-weight: bold; background: #F0F2F5; border-bottom: 1px solid #E0E0E0; display: flex; align-items: center; justify-content: space-between; }
+.lnb-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.history-item { padding: 10px; background: #fff; border: 1px solid #E0E0E0; border-radius: 6px; cursor: pointer; display: flex; align-items: flex-start; gap: 8px; transition: 0.2s; }
+.history-item:hover { border-color: #B3E5FC; }
+.history-item.selected { border-color: #81D4FA; background: #F1F9FF; }
+.history-item > div { min-width: 0; overflow: hidden; }
+.history-time { font-size: 10px; color: #888; font-weight: bold; margin-bottom: 3px; }
+.history-preview { font-size: 11px; color: #555; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
+.lnb-actions { height: 55px; padding: 10px 12px; border-top: 1px solid #E0E0E0; background: #fff; display: flex; gap: 6px; align-items: center; }
+
+/* [3] 메인 컨텐츠 영역 */
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.top-nav { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #E0E0E0; height: 43px; background: #fff; flex-shrink: 0; }
+.tab-header { display: flex; height: 100%; align-items: flex-end; }
+.tab-btn { width: 110px; height: 100%; border: none; background: transparent; font-size: 13px; font-weight: bold; color: #888; cursor: pointer; border-right: 1px solid #EEE; outline: none; }
+.tab-btn.active { background: #757575; color: #FFFFFF; border-right: none; }
+.nav-actions { padding-right: 15px; display: flex; align-items: center; gap: 8px; }
+
+/* [4] 버튼 및 입력창 */
+.btn { border: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 6px 12px; transition: 0.2s; display: inline-flex; justify-content: center; align-items: center; white-space: nowrap; outline: none; }
+.btn-clear { background: #FFEBEE; color: #E57373; }
+.btn-copy { background: #E0E0E0; color: #333; }
+.btn-primary { background: #D4EFFF; color: #333; }
+.tab-content { flex: 1; padding: 20px; display: none; flex-direction: column; overflow: hidden; }
+.tab-content.active { display: flex; }
+.converter-layout { display: flex; gap: 15px; height: 100%; }
+.pane { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.pane-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; min-height: 32px; }
+.pane-title { font-size: 13px; font-weight: bold; color: #555; }
+.header-buttons { display: flex; gap: 6px; }
+textarea { width: 100%; flex: 1; border: 1px solid #E0E0E0; border-radius: 8px; padding: 12px; font-family: 'Malgun Gothic', sans-serif; font-size: 13px; resize: none; outline: none; line-height: 1.6; }
+.char-count { text-align: right; font-size: 11px; color: #888; margin-top: 4px; font-weight: bold; }
+.mid-buttons { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 10px; }
+
+/* [5] Jira 가이드 모달 */
+.jira-guide-section { margin-bottom: 20px; }
+.jira-guide-title { font-size: 13px; font-weight: bold; color: #222; margin-bottom: 10px; }
+.jira-guide-ol { padding-left: 18px; color: #444; font-size: 13px; }
+.jira-guide-ol li { margin-bottom: 6px; }
+.jira-guide-meta { display: flex; flex-direction: column; gap: 6px; background: #f9f9f9; border: 1px solid #EEEEEE; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #555; }
+.jira-meta-label { display: inline-block; width: 70px; font-weight: bold; color: #888; }
+.jira-guide-register { border-top: 1px solid #f0f0f0; padding-top: 18px; }
+.help-meta { display: grid; grid-template-columns: max-content 1fr; gap: 8px 14px; background: #f9f9f9; border: 1px solid #EEEEEE; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #555; }
+.help-meta-label { font-weight: bold; color: #444; white-space: nowrap; padding-top: 1px; }
+
+/* [6] 취합 세트 분할 */
+.set-item { border: 1px solid #E0E0E0; border-radius: 6px; padding: 7px 10px; margin-bottom: 5px; background: #fff; }
+.set-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; cursor: pointer; user-select: none; }
+.set-header:hover .set-title { color: #0288D1; }
+.set-title { font-size: 12px; font-weight: bold; color: #555; transition: color 0.15s; }
+.set-chars { font-weight: normal; color: #aaa; }
+.set-toggle { font-size: 10px; color: #aaa; }
+.set-preview { font-size: 11px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.set-full { display: none; margin-top: 6px; }
+.set-textarea { width: 100%; height: 110px; resize: none; font-size: 11px; color: #555; border: 1px solid #EEEEEE; border-radius: 4px; padding: 8px; line-height: 1.6; background: #fafafa; font-family: 'Malgun Gothic', sans-serif; outline: none; }
+
+/* [7] 변환 완료 팝업 */
+@keyframes popIn {
+    0%   { transform: scale(0.4); opacity: 0; }
+    65%  { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); }
+}
+.complete-popup { animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* [8] 모달 시스템 */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.2s; }
+.modal-overlay.show { display: flex; opacity: 1; }
+.modal-content { background: #fff; width: 90%; max-width: 500px; border-radius: 15px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); position: relative; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+.modal-title { font-size: 16px; font-weight: bold; color: #333; display: flex; align-items: center; gap: 6px; }
+
+/* [9] 토스트 알림 */
+#toast { position: fixed; bottom: 30px; right: 30px; background: #4CAF50; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: 0.3s; transform: translateY(20px); z-index: 1000; pointer-events: none; }
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.show.error { background: #F44336; }
