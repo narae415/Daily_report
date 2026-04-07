@@ -194,16 +194,37 @@ function processText() {
     const input = document.getElementById('input_box').value.trimEnd().split('\n');
     const result = [];
     const romanRegex = /^(i{1,3}|iv|v|vi{1,3}|ix|x)\./i;
+    
+    // 추가: 현재 어느 괄호(섹션) 안에 있는지 기억하는 변수
+    let currentSection = ""; 
+
     for (let line of input) {
         const clean = line.trim();
         if (!clean) { result.push(""); continue; }
-        if (clean.startsWith('■') || /^\[.*\]$/.test(clean)) { result.push(clean); continue; }
+        
+        // ■ 이름 또는 [업무], [조직도] 등은 들여쓰기 없이 그대로 출력
+        if (clean.startsWith('■') || /^\[.*\]$/.test(clean)) { 
+            if (/^\[.*\]$/.test(clean)) {
+                currentSection = clean; // 괄호를 만나면 현재 섹션 업데이트
+            }
+            result.push(clean); 
+            continue; 
+        }
+        
+        // 핵심 수정: 현재 섹션이 [업무]일 때 하이픈(-)으로 시작하면 들여쓰기 안 함
+        if (currentSection === '[업무]' && clean.startsWith('-')) {
+            result.push(clean);
+            continue;
+        }
+
+        // 기존 넘버링 들여쓰기 규칙 (1. -> a. -> i. -> -)
         if (/^\d/.test(clean)) result.push(clean);
         else if (/^[a-z]\./.test(clean) && !romanRegex.test(clean)) result.push("  " + clean);
         else if (romanRegex.test(clean)) result.push("    " + clean);
         else if (clean.startsWith('-')) result.push("      " + clean);
         else result.push("        " + clean);
     }
+    
     const out = result.join('\n');
     document.getElementById('output_box').value = out;
     updateCount('output_box', 'output_count');
