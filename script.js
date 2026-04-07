@@ -271,7 +271,7 @@ function copyProgress() {
     const t = new Date();
     const mm = String(t.getMonth() + 1).padStart(2, '0');
     const dd = String(t.getDate()).padStart(2, '0');
-    copyToClipboard(`(${name} / 100% / ${mm}/${dd})`, "✅ 진행률 복사 완료");
+    copyToClipboard(`(${name} , 100% , ${mm}/${dd})`, "✅ 진행률 복사 완료");
 }
 
 function applyFixedFormat() {
