@@ -250,13 +250,14 @@ function loadJiraFromClipboard() {
 
 function saveConfig() {
     const popupEl = document.getElementById('cfg_show_popup');
-    const data = { name: document.getElementById('cfg_name').value, services: document.getElementById('cfg_services').value, input: document.getElementById('input_box').value, jira: document.getElementById('jira_input_box').value, showPopup: popupEl ? popupEl.checked : true };
+    const data = { name: document.getElementById('cfg_name').value, rank: document.getElementById('cfg_rank').value, services: document.getElementById('cfg_services').value, input: document.getElementById('input_box').value, jira: document.getElementById('jira_input_box').value, showPopup: popupEl ? popupEl.checked : true };
     localStorage.setItem('dailyReportConfig', JSON.stringify(data));
 }
 function loadConfig() {
     const data = JSON.parse(localStorage.getItem('dailyReportConfig'));
     if (data) {
         document.getElementById('cfg_name').value = data.name || "";
+        document.getElementById('cfg_rank').value = data.rank || "";
         document.getElementById('cfg_services').value = data.services || "";
         document.getElementById('input_box').value = data.input || "";
         document.getElementById('jira_input_box').value = data.jira || "";
@@ -276,11 +277,13 @@ function copyProgress() {
 
 function applyFixedFormat() {
     const name = document.getElementById('cfg_name').value.trim();
+    const rank = document.getElementById('cfg_rank').value.trim();
     const svcs = document.getElementById('cfg_services').value.trim().split(',');
     if (!name) return showToast("⚠️ 설정에서 이름을 먼저 입력해주세요.", true);
     const current = document.getElementById('input_box').value;
     if (current.trim() && !confirm("작성창의 내용이 초기화됩니다. 계속하시겠습니까?")) return;
-    let txt = `■ ${name}\n[업무]\n` + svcs.map(s => s.trim() ? `- ${s.trim()}` : '').filter(s => s).join('\n');
+    const nameWithRank = rank ? `${name} ${rank}` : name;
+    let txt = `■ ${nameWithRank}\n[업무]\n` + svcs.map(s => s.trim() ? `- ${s.trim()}` : '').filter(s => s).join('\n');
     document.getElementById('input_box').value = txt;
     updateCount('input_box', 'input_count');
     saveConfig();
@@ -317,7 +320,7 @@ function renderSmartLines(parsed) {
     const cnt = [0, 0, 0, 0];
     return parsed.map(p => {
         if (!p.isList) {
-            cnt.fill(0);
+            if (/^\[.+\]/.test(p.content.trim())) cnt.fill(0);
             return p.content;
         }
         cnt[p.level]++;

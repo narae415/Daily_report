@@ -95,7 +95,10 @@
         <div style="display:flex; flex-direction:column; gap:14px; padding-top:4px;">
             <div style="display:flex; flex-direction:column; gap:6px;">
                 <label style="font-size:12px; font-weight:bold; color:#555;">이름</label>
-                <input type="text" id="cfg_name" style="padding:8px 10px; border:1px solid #E0E0E0; border-radius:6px; font-size:13px; outline:none;">
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="cfg_name" placeholder="이름" style="flex:1; padding:8px 10px; border:1px solid #E0E0E0; border-radius:6px; font-size:13px; outline:none;">
+                    <input type="text" id="cfg_rank" placeholder="직급 (선택)" style="width:110px; padding:8px 10px; border:1px solid #E0E0E0; border-radius:6px; font-size:13px; outline:none;">
+                </div>
             </div>
             <div style="display:flex; flex-direction:column; gap:6px;">
                 <label style="font-size:12px; font-weight:bold; color:#555;">서비스명</label>
